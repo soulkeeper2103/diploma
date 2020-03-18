@@ -1,28 +1,58 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-app>
+    <v-card>
+      <v-toolbar
+              color=#FFCC66
+              flat
+      >
+        <v-toolbar-title>Page title</v-toolbar-title>
+        <template v-slot:extension>
+          <v-tabs
+                  centered
+                  fixed-tabs
+                  slider-color="black"
+          >
+            <v-tab>
+              Item
+            </v-tab>
+            <v-tab-item>
+              <v-app>
+                hfhfhfh
+              </v-app>
+            </v-tab-item>
+            <v-tab>
+              Item
+            </v-tab>
+            <v-tab-item>1wd</v-tab-item>
+            <v-tab>
+              Item
+            </v-tab>
+            <v-tab-item>1wd</v-tab-item>
+            <v-tab>
+              Item
+            </v-tab>
+            <v-tab-item>1wd</v-tab-item>
+          </v-tabs>
+        </template>
+      </v-toolbar>
+    </v-card>
+    <v-footer absolute>2020</v-footer>
+  </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
   name: 'App',
-  components: {
-    HelloWorld
-  }
-}
-</script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+  components: {
+
+  },
+
+  data () {
+    return {
+    }
+
+    //
+  }
+};
+</script>
