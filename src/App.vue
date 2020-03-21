@@ -1,50 +1,46 @@
 <template>
   <v-app>
-    <v-card>
       <v-toolbar
-              color=#FFCC66
+              dark
+              app
+              src="./assets/arch.jpeg"
               flat
       >
-        <v-toolbar-title>Page title</v-toolbar-title>
-        <template v-slot:extension>
-          <v-tabs
-                  centered
-                  fixed-tabs
-                  slider-color="black"
-          >
-            <v-tab>
-              Item
-            </v-tab>
-            <v-tab-item>
-              <v-app>
-                hfhfhfh
-              </v-app>
-            </v-tab-item>
-            <v-tab>
-              Item
-            </v-tab>
-            <v-tab-item>1wd</v-tab-item>
-            <v-tab>
-              Item
-            </v-tab>
-            <v-tab-item>1wd</v-tab-item>
-            <v-tab>
-              Item
-            </v-tab>
-            <v-tab-item>1wd</v-tab-item>
-          </v-tabs>
+        <v-toolbar-title>Архив АльдА</v-toolbar-title>
+        <template v-slot:img="{ props }">
+          <v-img
+                  v-bind="props"
+                  gradient="to top right, rgba(199,165,104,.5), rgba(235,215,174,.8)"
+          ></v-img>
         </template>
       </v-toolbar>
-    </v-card>
-    <v-footer absolute>2020</v-footer>
+      <v-tabs
+              dark
+              background-color="rgba(235,215,174,.8)"
+              centered
+              fixed-tabs
+              slider-color="white"
+      >
+
+        <v-tab>
+          О нас
+        </v-tab>
+        <v-tab-item ><about></about></v-tab-item>
+      </v-tabs>
+    <v-footer>
+         © 2020 ЗАО «Архив АльдА»
+    </v-footer>
+
   </v-app>
 </template>
 
 <script>
+import About from "./components/About";
 export default {
   name: 'App',
 
   components: {
+    About
 
   },
 
