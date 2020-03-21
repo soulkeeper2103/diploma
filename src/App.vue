@@ -2,9 +2,7 @@
   <v-app>
       <v-toolbar
               dark
-              app
               src="./assets/arch.jpeg"
-              flat
       >
         <v-toolbar-title>Архив АльдА</v-toolbar-title>
         <template v-slot:img="{ props }">
@@ -21,11 +19,29 @@
               fixed-tabs
               slider-color="white"
       >
-
+          <v-tab>
+              Архивная обработка
+          </v-tab>
+          <v-tab-item>
+            <ArchiveProcessing></ArchiveProcessing>
+          </v-tab-item>
+          <v-tab>
+             Переплет
+          </v-tab>
+          <v-tab-item>
+              <Binding></Binding>
+          </v-tab-item>
+          <v-tab>
+              Уничтожение
+          </v-tab>
+          <v-tab-item>
+              <Destruct></Destruct>
+          </v-tab-item>
         <v-tab>
           О нас
         </v-tab>
         <v-tab-item ><about></about></v-tab-item>
+
       </v-tabs>
     <v-footer>
          © 2020 ЗАО «Архив АльдА»
@@ -36,10 +52,16 @@
 
 <script>
 import About from "./components/About";
+import ArchiveProcessing from "./components/ArchiveProcessing";
+import Binding from "./components/Binding";
+import Destruct from "./components/Destruct";
 export default {
   name: 'App',
 
   components: {
+      Destruct,
+      Binding,
+      ArchiveProcessing,
     About
 
   },
