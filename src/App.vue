@@ -2,6 +2,7 @@
   <v-app>
       <v-card>
       <v-app-bar
+              prominent
               dark
               src="./assets/arch.jpeg">
           <v-toolbar-title>Архив Альда</v-toolbar-title>
@@ -14,7 +15,7 @@
       </v-app-bar>
       </v-card>
       <tabs></tabs>
-      <v-footer absolute>2020</v-footer>
+      <v-footer>2020</v-footer>
   </v-app>
 </template>
 
