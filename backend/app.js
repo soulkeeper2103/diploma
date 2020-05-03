@@ -27,24 +27,13 @@ class Application {
 
     attachRoutes () {
         let app = this.expressApp;
-        // Создадим middleware для обработки JSON-тел запросов, т. е. функцию,
-        // которая будет вызываться перед нашими обработчиками и обрабатывать
-        // JSON в теле запроса, чтобы наш обработчик получил готовый объект.
         let jsonParser = bodyParser.json();
         app.use(express.json())
-        // Назначаем функции-обработчики для GET/POST разных URL. При запросе на
-        // указанный первым аргументом адрес, будут вызваны все функции,
-        // которые переданы начиная со второго аргумента (их может быть сколько
-        // угодно).
-        // Важно обратить внимание на .bind - тут мы назначаем в качестве
-        // обработчиков методы, а не функции. По сути, метод - это функция,
-        // привязанная к объекту, что мы и делаем методом bind. Без него мы
-        // получим неопределенный this, так как метод будет вызван как обычная
-        // функция. Так следует делать всегда при передаче метода как аргумента.
-        // Каждый обработчик принимает два аргумента - объекты запроса и ответа,
-        // обозначаемые как req и res.
         app.get('/users/:id',  this.getLogin.bind(this));
+        app.get('/requests/:id',  this.getRequestsById.bind(this));
+        app.get('/requestsStatus/:id',  this.getRequestStatusById.bind(this));
         app.post('/registerNewUser', jsonParser, this.registerNewUser.bind(this));
+        app.post('/sendRequest', jsonParser, this.sendRequest.bind(this));
     }
 
 
@@ -60,6 +49,30 @@ class Application {
                 }).catch(err => {
                     console.dir(err)
                 });
+    }
+    getRequestsById(req, res) {
+        sql.connect(config).then(pool => {
+            // Stored procedure
+            return pool.request()
+                .input('id', sql.Int, req.param('id'))
+                .execute('getRequestsById')
+        }).then(result => {
+            res.send(result.recordsets);
+        }).catch(err => {
+            console.dir(err)
+        });
+    }
+    getRequestStatusById(req, res) {
+        sql.connect(config).then(pool => {
+            // Stored procedure
+            return pool.request()
+                .input('id', sql.Int, req.param('id'))
+                .execute('getRequestStatusById')
+        }).then(result => {
+            res.send(result.recordsets);
+        }).catch(err => {
+            console.dir(err)
+        });
     }
     registerNewUser(req, res)
     {
@@ -81,6 +94,25 @@ class Application {
              console.dir(err)
               res.status(404).json({})
          });
+
+    }
+    sendRequest(req, res)
+    {
+        req.accepts('application/json');
+        sql.connect(config).then(pool => {
+            // Stored procedure
+            return pool.request()
+                .input('login', sql.VarChar(24), req.body.login)
+                .input('text', sql.Text, req.body.text)
+                .input('type', sql.VarChar(20), req.body.type)
+                .execute('sendRequest')
+        }).then(result => {
+            console.dir("success")
+            res.status(200).json({})
+        }).catch(err => {
+            console.dir(err)
+            res.status(404).json({})
+        });
 
     }
 }
