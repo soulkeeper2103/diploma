@@ -7,7 +7,8 @@ Vue.config.productionTip = false
 new Vue({
   data:{
     showData: false,
-    type: ''
+    type: '',
+    login: ''
   },
   vuetify,
   render: h => h(App)

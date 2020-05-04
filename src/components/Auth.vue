@@ -23,6 +23,9 @@
                     :rules="[rules.required]"
                     maxlength="99"
                     placeholder="Ваш пароль"
+                    :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+                    :type="show ? 'text' : 'password'"
+                    @click:append="show = !show"
             />
             <v-card-actions>
                 <v-btn
@@ -40,6 +43,7 @@
         data()
         {
             return{
+                show: false,
                 rules: {
                     required: value => !!value || 'Обязательно для заполнения',
                 },
@@ -59,10 +63,13 @@
                         password: this.password,
                     },
                 }).then((response) => {
-                    console.log(response)
-                    this.$root.type = response.data[0].type;
-                    this.$root.showData = true;
-                    this.$cookies.set("userToken",response.data[1], "30D")
+                    if(response.status==200) {
+                        console.log(response)
+                        this.$root.type = response.data[0].type;
+                        this.$root.login = response.data[0].login;
+                        this.$root.showData = true;
+                        this.$cookies.set("userToken", response.data[1], "30D")
+                    }
                 })
                     .catch((error) => (console.log(error)));
             }

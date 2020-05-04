@@ -32,8 +32,7 @@ class Application {
         let app = this.expressApp;
         let jsonParser = bodyParser.json();
         app.use(express.json())
-        app.get('/users/:id',  this.getLogin.bind(this));
-        app.get('/requests/:id',  this.getRequestsById.bind(this));
+        app.get('/requests/:login',  this.getRequestsByLogin.bind(this));
         app.get('/requestsStatus/:id',  this.getRequestStatusById.bind(this));
         app.post('/registerNewUser', jsonParser, this.registerNewUser.bind(this));
         app.post('/sendRequest', jsonParser, this.sendRequest.bind(this));
@@ -41,29 +40,14 @@ class Application {
     }
 
 
-    getLogin(req, res) {
-        if (this.checkToken(req.body.token)==1) return
-        res = this.setHeaders(res);
-            // Создаем сообщение и возвращаем его клиенту
-                sql.connect(config).then(pool => {
-                    // Stored procedure
-                    return pool.request()
-                        .input('id', sql.Int, req.param('id'))
-                        .execute('getLoginById')
-                }).then(result => {
-                    res.send(result.recordsets);
-                }).catch(err => {
-                    console.dir(err)
-                });
-    }
-    getRequestsById(req, res) {
+    getRequestsByLogin(req, res) {
         if (this.checkToken(req.get('Token'))==1) return
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
             // Stored procedure
             return pool.request()
-                .input('id', sql.Int, req.param('id'))
-                .execute('getRequestsById')
+                .input('login', sql.VarChar(24), req.param('login'))
+                .execute('getRequestsByLogin')
         }).then(result => {
             res.send(result.recordsets);
         }).catch(err => {
@@ -71,7 +55,7 @@ class Application {
         });
     }
     getRequestStatusById(req, res) {
-        if (this.checkToken(req.get('Token')==1)) return
+        if (this.checkToken(req.get('Token'))==1) {console.log("failed");return}
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
             // Stored procedure
@@ -79,7 +63,7 @@ class Application {
                 .input('id', sql.Int, req.param('id'))
                 .execute('getRequestStatusById')
         }).then(result => {
-            res.send(result.recordsets);
+            res.send(result.recordset);
         }).catch(err => {
             console.dir(err)
         });
@@ -137,7 +121,8 @@ class Application {
                 .input('password', sql.VarChar(99), req.body.password)
                 .execute('auth')
         }).then(result => {
-            console.dir("success")
+            if(result.recordset==''){res.status(400).send("invalid pass or login");return}
+            console.dir(result)
             let payload = result.recordset
             let token = jwt.sign({payload}, '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?', { algorithm: 'HS512' });
             payload.push(token);
