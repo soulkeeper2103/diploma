@@ -1,6 +1,8 @@
 const express = require('express');
+const cors = require('cors')
 const bodyParser = require('body-parser');
 const sql = require('mssql/msnodesqlv8');
+const jwt = require('jsonwebtoken');
 const config = {
     user: "archiveClient",
     password: "password",
@@ -23,6 +25,7 @@ class Application {
         // Создаем наше Express-приложение.
         this.expressApp = express();
         this.attachRoutes();
+        this.expressApp.use(cors())
     }
 
     attachRoutes () {
@@ -34,10 +37,13 @@ class Application {
         app.get('/requestsStatus/:id',  this.getRequestStatusById.bind(this));
         app.post('/registerNewUser', jsonParser, this.registerNewUser.bind(this));
         app.post('/sendRequest', jsonParser, this.sendRequest.bind(this));
+        app.post('/auth', jsonParser, this.auth.bind(this));
     }
 
 
     getLogin(req, res) {
+        if (this.checkToken(req.body.token)==1) return
+        res = this.setHeaders(res);
             // Создаем сообщение и возвращаем его клиенту
                 sql.connect(config).then(pool => {
                     // Stored procedure
@@ -51,6 +57,8 @@ class Application {
                 });
     }
     getRequestsById(req, res) {
+        if (this.checkToken(req.get('Token'))==1) return
+        res = this.setHeaders(res);
         sql.connect(config).then(pool => {
             // Stored procedure
             return pool.request()
@@ -63,6 +71,8 @@ class Application {
         });
     }
     getRequestStatusById(req, res) {
+        if (this.checkToken(req.get('Token')==1)) return
+        res = this.setHeaders(res);
         sql.connect(config).then(pool => {
             // Stored procedure
             return pool.request()
@@ -76,7 +86,8 @@ class Application {
     }
     registerNewUser(req, res)
     {
-        req.accepts('application/json');
+        if (this.checkToken(req.body.token)==1) return
+        res = this.setHeaders(res);
          sql.connect(config).then(pool => {
              // Stored procedure
              return pool.request()
@@ -98,7 +109,7 @@ class Application {
     }
     sendRequest(req, res)
     {
-        req.accepts('application/json');
+        res = this.setHeaders(res);
         sql.connect(config).then(pool => {
             // Stored procedure
             return pool.request()
@@ -114,6 +125,42 @@ class Application {
             res.status(404).json({})
         });
 
+    }
+
+    auth(req, res)
+    {
+        res = this.setHeaders(res);
+        sql.connect(config).then(pool => {
+            // Stored procedure
+            return pool.request()
+                .input('login', sql.VarChar(24), req.body.login)
+                .input('password', sql.VarChar(99), req.body.password)
+                .execute('auth')
+        }).then(result => {
+            console.dir("success")
+            let payload = result.recordset
+            let token = jwt.sign({payload}, '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?', { algorithm: 'HS512' });
+            payload.push(token);
+            res.send(payload)
+        }).catch(err => {
+            console.dir(err)
+            res.status(404).json({})
+        });
+    }
+    setHeaders(res)
+    {
+        res.set({'X-Content-Type-Options':'nosniff',
+            'Access-Control-Allow-Origin':'*'})
+        return res
+    }
+    checkToken(token)
+    {
+        try {
+            var decoded = jwt.verify(token, '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?');
+            return 0;
+        } catch(err) {
+            return 1;
+        }
     }
 }
 
