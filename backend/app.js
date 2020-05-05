@@ -33,12 +33,46 @@ class Application {
         let jsonParser = bodyParser.json();
         app.use(express.json())
         app.get('/requests/:login',  this.getRequestsByLogin.bind(this));
+        app.get('/requests',  this.getRequests.bind(this));
+        app.get('/sendMessages/:login',  this.getSendMessages.bind(this));
+        app.get('/receivedMessages/:login',  this.getReceivedMessages.bind(this));
         app.get('/requestsStatus/:id',  this.getRequestStatusById.bind(this));
+        app.get('/documents/:login',  this.getDocumentsByLogin.bind(this));
         app.post('/registerNewUser', jsonParser, this.registerNewUser.bind(this));
         app.post('/sendRequest', jsonParser, this.sendRequest.bind(this));
         app.post('/auth', jsonParser, this.auth.bind(this));
+        app.post('/changeRequestStatus', jsonParser, this.changeRequestStatus.bind(this));
     }
 
+    getSendMessages(req, res) {
+        if (this.checkToken(req.get('Token'))==1) return
+        res = this.setHeaders(res);
+        sql.connect(config).then(pool => {
+            // Stored procedure
+            return pool.request()
+                .input('login', sql.VarChar(24), req.param('login'))
+                .execute('getSendMessages')
+        }).then(result => {
+            res.send(result.recordsets);
+        }).catch(err => {
+            console.dir(err)
+        });
+    }
+
+    getReceivedMessages(req, res) {
+        if (this.checkToken(req.get('Token'))==1) return
+        res = this.setHeaders(res);
+        sql.connect(config).then(pool => {
+            // Stored procedure
+            return pool.request()
+                .input('login', sql.VarChar(24), req.param('login'))
+                .execute('getReceivedMessages')
+        }).then(result => {
+            res.send(result.recordsets);
+        }).catch(err => {
+            console.dir(err)
+        });
+    }
 
     getRequestsByLogin(req, res) {
         if (this.checkToken(req.get('Token'))==1) return
@@ -48,6 +82,32 @@ class Application {
             return pool.request()
                 .input('login', sql.VarChar(24), req.param('login'))
                 .execute('getRequestsByLogin')
+        }).then(result => {
+            res.send(result.recordsets);
+        }).catch(err => {
+            console.dir(err)
+        });
+    }
+    getRequests(req, res) {
+        if (this.checkToken(req.get('Token'))==1) return
+        res = this.setHeaders(res);
+        sql.connect(config).then(pool => {
+            return pool.request()
+                .execute('getRequests')
+        }).then(result => {
+            res.send(result.recordsets);
+        }).catch(err => {
+            console.dir(err)
+        });
+    }
+    getDocumentsByLogin(req, res) {
+        if (this.checkToken(req.get('Token'))==1) return
+        res = this.setHeaders(res);
+        sql.connect(config).then(pool => {
+            // Stored procedure
+            return pool.request()
+                .input('login', sql.VarChar(24), req.param('login'))
+                .execute('getDocumentsByLogin')
         }).then(result => {
             res.send(result.recordsets);
         }).catch(err => {
@@ -99,8 +159,28 @@ class Application {
             return pool.request()
                 .input('login', sql.VarChar(24), req.body.login)
                 .input('text', sql.Text, req.body.text)
-                .input('type', sql.VarChar(20), req.body.type)
+                .input('type', sql.VarChar(30), req.body.type)
                 .execute('sendRequest')
+        }).then(result => {
+            console.dir("success")
+            res.status(200).json({})
+        }).catch(err => {
+            console.dir(err)
+            res.status(404).json({})
+        });
+
+    }
+
+    changeRequestStatus(req, res)
+    {
+        res = this.setHeaders(res);
+        if (this.checkToken(req.body.token)==1) return
+        sql.connect(config).then(pool => {
+            // Stored procedure
+            return pool.request()
+                .input('id', sql.Int, req.body.id)
+                .input('status', sql.VarChar(30), req.body.status)
+                .execute('changeRequestStatus')
         }).then(result => {
             console.dir("success")
             res.status(200).json({})

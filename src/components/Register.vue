@@ -1,5 +1,5 @@
 <template>
-      <v-card flat
+      <v-card
       width="33%">
           <v-card-text
                   class="headline
@@ -64,9 +64,6 @@
 
 <script>
     const axios = require('axios');
-    import Vue from 'vue'
-    import VueCookies from 'vue-cookies'
-    Vue.use(VueCookies)
 export default {
     name: 'Register',
     components: {},

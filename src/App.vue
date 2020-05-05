@@ -1,10 +1,12 @@
 <template>
     <v-app>
+        <appbar></appbar>
         <Auth v-if="!this.$root.showData"/>
         <v-content v-else>
             <AdministratorInterface v-if="this.$root.type=='administrator'"></AdministratorInterface>
             <ClientInterface v-else></ClientInterface>
         </v-content>
+        <v-spacer></v-spacer>
     </v-app>
 </template>
 
@@ -12,11 +14,16 @@
     import Auth from "./components/Auth";
     import AdministratorInterface from "./components/AdministratorInterface";
     import ClientInterface from "./components/ClientInterface";
+    import Appbar from "./components/appbar";
     export default {
         name: "App",
-        components: {ClientInterface, AdministratorInterface, Auth},
+        components: {Appbar, ClientInterface, AdministratorInterface, Auth},
         data(){
             return{}
+        },
+        beforeMount()
+        {
+
         }
     }
 </script>
