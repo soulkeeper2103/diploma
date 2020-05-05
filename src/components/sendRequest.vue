@@ -40,7 +40,6 @@
                      headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                      data: {
                          token: token,
-                         login: this.$root.login,
                          text: this.text,
                          type: this.type
                      },

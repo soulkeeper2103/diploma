@@ -39,7 +39,7 @@
                 let token = this.$cookies.get('userToken')
                 axios({
                     method: 'GET',
-                    url: 'http://localhost:8000/requests/' + this.$root.login,
+                    url: 'http://localhost:8000/requests/',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token': token},
                 }).then((response) => {
                     this.requests = response.data

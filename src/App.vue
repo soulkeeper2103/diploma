@@ -3,8 +3,8 @@
         <appbar></appbar>
         <Auth v-if="!this.$root.showData"/>
         <v-content v-else>
-            <AdministratorInterface v-if="this.$root.type=='administrator'"></AdministratorInterface>
-            <ClientInterface v-else></ClientInterface>
+            <AdministratorInterface v-if="this.$root.type=='Администратор'"></AdministratorInterface>
+            <ClientInterface v-else-if="this.$root.type=='Клиент'"></ClientInterface>
         </v-content>
         <v-spacer></v-spacer>
     </v-app>

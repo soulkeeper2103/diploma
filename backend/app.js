@@ -32,14 +32,17 @@ class Application {
         let app = this.expressApp;
         let jsonParser = bodyParser.json();
         app.use(express.json())
-        app.get('/requests/:login',  this.getRequestsByLogin.bind(this));
+        app.get('/requests',  this.getRequestsByLogin.bind(this));
         app.get('/requests',  this.getRequests.bind(this));
-        app.get('/sendMessages/:login',  this.getSendMessages.bind(this));
-        app.get('/receivedMessages/:login',  this.getReceivedMessages.bind(this));
+        app.get('/users',  this.getUsers.bind(this));
+        app.get('/sendMessages',  this.getSendMessages.bind(this));
+        app.get('/receivedMessages',  this.getReceivedMessages.bind(this));
         app.get('/requestsStatus/:id',  this.getRequestStatusById.bind(this));
-        app.get('/documents/:login',  this.getDocumentsByLogin.bind(this));
+        app.get('/documents',  this.getDocumentsByLogin.bind(this));
         app.post('/registerNewUser', jsonParser, this.registerNewUser.bind(this));
         app.post('/sendRequest', jsonParser, this.sendRequest.bind(this));
+        app.post('/sendMessage', jsonParser, this.sendMessage.bind(this));
+        app.post('/sendFeedback', jsonParser, this.sendFeedback.bind(this));
         app.post('/auth', jsonParser, this.auth.bind(this));
         app.post('/changeRequestStatus', jsonParser, this.changeRequestStatus.bind(this));
     }
@@ -50,7 +53,7 @@ class Application {
         sql.connect(config).then(pool => {
             // Stored procedure
             return pool.request()
-                .input('login', sql.VarChar(24), req.param('login'))
+                .input('login', sql.VarChar(24), jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].login)
                 .execute('getSendMessages')
         }).then(result => {
             res.send(result.recordsets);
@@ -65,7 +68,7 @@ class Application {
         sql.connect(config).then(pool => {
             // Stored procedure
             return pool.request()
-                .input('login', sql.VarChar(24), req.param('login'))
+                .input('login', sql.VarChar(24), jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].login)
                 .execute('getReceivedMessages')
         }).then(result => {
             res.send(result.recordsets);
@@ -80,7 +83,7 @@ class Application {
         sql.connect(config).then(pool => {
             // Stored procedure
             return pool.request()
-                .input('login', sql.VarChar(24), req.param('login'))
+                .input('login', sql.VarChar(24), jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].login)
                 .execute('getRequestsByLogin')
         }).then(result => {
             res.send(result.recordsets);
@@ -100,13 +103,26 @@ class Application {
             console.dir(err)
         });
     }
+    getUsers(req, res) {
+        if (this.checkToken(req.get('Token'))==1) return
+        res = this.setHeaders(res);
+        sql.connect(config).then(pool => {
+            return pool.request()
+                .input('type', sql.VarChar(13), jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type)
+                .execute('getUsersList')
+        }).then(result => {
+            res.send(result.recordsets);
+        }).catch(err => {
+            console.dir(err)
+        });
+    }
     getDocumentsByLogin(req, res) {
         if (this.checkToken(req.get('Token'))==1) return
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
             // Stored procedure
             return pool.request()
-                .input('login', sql.VarChar(24), req.param('login'))
+                .input('login', sql.VarChar(24), jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].login)
                 .execute('getDocumentsByLogin')
         }).then(result => {
             res.send(result.recordsets);
@@ -153,14 +169,57 @@ class Application {
     }
     sendRequest(req, res)
     {
+        if (this.checkToken(req.body.token)==1) return
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
             // Stored procedure
             return pool.request()
-                .input('login', sql.VarChar(24), req.body.login)
+                .input('login', sql.VarChar(24), jwt.verify(req.body.token, '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].login)
                 .input('text', sql.Text, req.body.text)
                 .input('type', sql.VarChar(30), req.body.type)
                 .execute('sendRequest')
+        }).then(result => {
+            console.dir("success")
+            res.status(200).json({})
+        }).catch(err => {
+            console.dir(err)
+            res.status(404).json({})
+        });
+
+    }
+
+    sendMessage(req, res)
+    {
+        if (this.checkToken(req.body.token)==1) return
+        res = this.setHeaders(res);
+        sql.connect(config).then(pool => {
+            // Stored procedure
+            return pool.request()
+                .input('loginSRC', sql.VarChar(24), jwt.verify(req.body.token, '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].login)
+                .input('loginDST', sql.VarChar(24), req.body.logindst)
+                .input('text', sql.Text, req.body.text)
+                .execute('sendMessage')
+        }).then(result => {
+            console.dir("success")
+            res.status(200).json({})
+        }).catch(err => {
+            console.dir(err)
+            res.status(404).json({})
+        });
+
+    }
+
+    sendFeedback(req, res)
+    {
+        if (this.checkToken(req.body.token)==1) return
+        res = this.setHeaders(res);
+        sql.connect(config).then(pool => {
+            // Stored procedure
+            return pool.request()
+                .input('login', sql.VarChar(24), jwt.verify(req.body.token, '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].login)
+                .input('rating', sql.Int , req.body.rating)
+                .input('text', sql.Text, req.body.text)
+                .execute('sendFeedback')
         }).then(result => {
             console.dir("success")
             res.status(200).json({})

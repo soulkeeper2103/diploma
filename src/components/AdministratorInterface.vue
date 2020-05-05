@@ -1,10 +1,10 @@
 <template>
-    <v-content>
+    <v-card>
     <Register></Register>
     <requestsAll></requestsAll>
         <messages></messages>
         <change-request-status></change-request-status>
-    </v-content>
+    </v-card>
 </template>
 
 <script>
@@ -17,7 +17,3 @@
         components: {Messages, ChangeRequestStatus, RequestsAll, Register}
     }
 </script>
-
-<style scoped>
-
-</style>

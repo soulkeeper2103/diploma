@@ -53,8 +53,8 @@
           />
           <v-card-text>Тип пользователя</v-card-text>
           <v-radio-group v-model="type" :mandatory="false">
-              <v-radio label="Клиент" value="client"></v-radio>
-              <v-radio label="Администратор" value="administrator"></v-radio>
+              <v-radio label="Клиент" value="Клиент"></v-radio>
+              <v-radio label="Администратор" value="Администратор"></v-radio>
           </v-radio-group>
           <v-card-actions>
               <v-btn
