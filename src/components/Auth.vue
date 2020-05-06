@@ -1,5 +1,5 @@
 <template>
-        <v-card
+        <v-card flat
                 width="33%">
             <v-card-text
                     class="headline
@@ -28,8 +28,11 @@
                     @click:append="show = !show"
             />
             <v-card-actions>
+                <v-spacer></v-spacer>
                 <v-btn
-                        @click="auth">Вход</v-btn></v-card-actions>
+                        @click="auth">Вход</v-btn>
+                <v-spacer></v-spacer>
+            </v-card-actions>
         </v-card>
 </template>
 

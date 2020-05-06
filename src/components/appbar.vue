@@ -1,11 +1,13 @@
 <template>
-    <v-app-bar class="v-app-bar">
-        <v-toolbar-title>
-            Система Архива Кнопка
-        </v-toolbar-title>
-        <v-spacer></v-spacer>
+    <v-card flat>
+        <v-toolbar
+                flat
+        >
+            <v-toolbar-title>Система Архива Кнопка</v-toolbar-title>
+            <v-spacer></v-spacer>
         <v-btn @click="unlog" v-if="this.$root.showData">ВЫХОД</v-btn>
-    </v-app-bar>
+        </v-toolbar>
+    </v-card>
 </template>
 
 <script>

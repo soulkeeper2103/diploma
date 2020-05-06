@@ -25,7 +25,7 @@
                     <v-combobox
                             v-model="select"
                             :items="items"
-                            label="Администратор"
+                            label="Пользователь"
                     ></v-combobox>
                     <v-textarea v-model="messageText"></v-textarea>
                     <v-card-actions>

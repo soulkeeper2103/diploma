@@ -13,16 +13,7 @@
                   clearable
                   :rules="[rules.required]"
                   maxlength="24"
-                  placeholder="Ваш Логин"
-          />
-          <v-text-field
-                  v-model="password"
-                  label="Пароль"
-                  outlined
-                  clearable
-                  :rules="[rules.required]"
-                  maxlength="99"
-                  placeholder="Ваш пароль"
+                  placeholder="Логин"
           />
           <v-text-field
                   v-model="name"
@@ -31,7 +22,7 @@
                   clearable
                   :rules="[rules.required]"
                   maxlength="90"
-                  placeholder="Ваше имя"
+                  placeholder="Имя"
           />
           <v-text-field
                   v-model="email"
@@ -40,7 +31,7 @@
                   outlined
                   clearable
                   maxlength="30"
-                  placeholder="Ваша электронная почта"
+                  placeholder="Электронная почта"
           />
           <v-text-field
                   v-model="phone"
@@ -82,7 +73,6 @@ export default {
                 }
             },
             login: '',
-            password: '',
             name: '',
             phone: '',
             email: '',
@@ -100,7 +90,6 @@ export default {
                 data: {
                     token: token,
                     login: this.login,
-                    password: this.password,
                     name: this.name,
                     email: this.email,
                     phone: this.phone,

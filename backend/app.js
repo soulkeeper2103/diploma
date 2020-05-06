@@ -3,6 +3,9 @@ const cors = require('cors')
 const bodyParser = require('body-parser');
 const sql = require('mssql/msnodesqlv8');
 const jwt = require('jsonwebtoken');
+const generatePassword = require('password-generator');
+const nodemailer = require('nodemailer');
+var UsernameGenerator = require('username-generator');
 const config = {
     user: "archiveClient",
     password: "password",
@@ -18,6 +21,15 @@ const config = {
         trustedConnection: true
     }
 }
+const transporter = nodemailer.createTransport({
+    host: "smtp.yandex.ru",
+    port: 465,
+    secure: true, // upgrade later with STARTTLS
+    auth: {
+        user: "soulkeeper2103",
+        pass: "Qwerty99"
+    }
+});
 
 
 class Application {
@@ -33,7 +45,7 @@ class Application {
         let jsonParser = bodyParser.json();
         app.use(express.json())
         app.get('/requests',  this.getRequestsByLogin.bind(this));
-        app.get('/requests',  this.getRequests.bind(this));
+        app.get('/requestsAll',  this.getRequests.bind(this));
         app.get('/users',  this.getUsers.bind(this));
         app.get('/sendMessages',  this.getSendMessages.bind(this));
         app.get('/receivedMessages',  this.getReceivedMessages.bind(this));
@@ -41,6 +53,7 @@ class Application {
         app.get('/documents',  this.getDocumentsByLogin.bind(this));
         app.post('/registerNewUser', jsonParser, this.registerNewUser.bind(this));
         app.post('/sendRequest', jsonParser, this.sendRequest.bind(this));
+        app.post('/sendUnauthorizedRequest', jsonParser, this.sendUnauthorizedRequest.bind(this));
         app.post('/sendMessage', jsonParser, this.sendMessage.bind(this));
         app.post('/sendFeedback', jsonParser, this.sendFeedback.bind(this));
         app.post('/auth', jsonParser, this.auth.bind(this));
@@ -148,11 +161,12 @@ class Application {
     {
         if (this.checkToken(req.body.token)==1) return
         res = this.setHeaders(res);
+        let pass = this.generateStrongPassword();
          sql.connect(config).then(pool => {
              // Stored procedure
              return pool.request()
                 .input('login', sql.VarChar(24), req.body.login)
-                .input('password', sql.VarChar(99), req.body.password)
+                .input('password', sql.VarChar(99), pass)
                 .input('name', sql.VarChar(90), req.body.name)
                 .input('phone', sql.VarChar(12), req.body.phone)
                 .input('email', sql.VarChar(30), req.body.email)
@@ -160,6 +174,19 @@ class Application {
                 .execute('registerNewUser')
          }).then(result => {
              console.dir("success")
+             var message = {
+                 from: "soulkeeper2103@yandex.ru",
+                 to:  req.body.email,
+                 subject: "Ваш логин и пароль для входа в систему Архива Кнопка",
+                 text: req.body.name + ",Вы успешно зарегистрированы в системе Архива Кнопка. Поздравляем!\n" +
+                     "Ваш логин: " + req.body.login + "\nВаш пароль: " + pass,
+             };
+             transporter.sendMail(message, (error, info) => {
+                 if (error) {
+                     console.log('Error occurred');
+                     console.log(error.message);
+                     return process.exit(1);
+                 }})
              res.status(200).json({})
          }).catch(err => {
              console.dir(err)
@@ -187,7 +214,63 @@ class Application {
         });
 
     }
+    sendUnauthorizedRequest(req, res)
+    {
+        let pass = this.generateStrongPassword();
+        let username = UsernameGenerator.generateUsername();
+        res = this.setHeaders(res);
+        sql.connect(config).then(pool => {
+            // Stored procedure
+            return pool.request()
+                .input('login', sql.VarChar(24), username)
+                .input('comment', sql.Text, req.body.text)
+                .input('type', sql.VarChar(30), req.body.type)
+                .input('password', sql.VarChar(99), pass)
+                .input('name', sql.VarChar(90), req.body.name)
+                .input('phone', sql.VarChar(12), req.body.phone)
+                .input('email', sql.VarChar(30), req.body.email)
+                .execute('sendUnauthorizedRequest')
+        }).then(result => {
+            console.log(result.recordset[0])
+            if(result.recordset[0].res==0) {
+                var message = {
+                    from: "soulkeeper2103@yandex.ru",
+                    to: req.body.email,
+                    subject: "Заявка отправлена",
+                    text: req.body.name + ",Заявка успешно отправлена. Поздравляем!\n Ваши учетные данные от личного кабинета\n" +
+                        "Ваш логин: " + username + "\nВаш пароль: " + pass,
+                };
+                transporter.sendMail(message, (error, info) => {
+                    if (error) {
+                        console.log('Error occurred');
+                        console.log(error.message);
+                        return process.exit(1);
+                    }
+                })
+            }
+            if(result.recordset[0].res==1) {
+                var message1 = {
+                    from: "soulkeeper2103@yandex.ru",
+                    to: req.body.email,
+                    subject: "Заявка отправлена",
+                    text: req.body.name + ",Заявка успешно отправлена. Поздравляем!",
+                };
+                transporter.sendMail(message1, (error, info) => {
+                    if (error) {
+                        console.log('Error occurred');
+                        console.log(error.message);
+                        return process.exit(1);
+                    }
+                })
+            }
+            console.dir("success")
+            res.status(200).json({})
+        }).catch(err => {
+            console.dir(err)
+            res.status(404).json({})
+        });
 
+    }
     sendMessage(req, res)
     {
         if (this.checkToken(req.body.token)==1) return
@@ -285,6 +368,44 @@ class Application {
         } catch(err) {
             return 1;
         }
+    }
+    generateStrongPassword()
+    {
+        const maxLength = 90;
+        const minLength = 60;
+        const uppercaseMinCount = 6;
+        const lowercaseMinCount = 6;
+        const numberMinCount = 4;
+        const specialMinCount = 4;
+        const UPPERCASE_RE = /([A-Z])/g;
+        const LOWERCASE_RE = /([a-z])/g;
+        const NUMBER_RE = /([\d])/g;
+        const SPECIAL_CHAR_RE = /([\?\-])/g;
+        const NON_REPEATING_CHAR_RE = /([\w\d\?\-])\1{2,}/g;
+
+        function isStrongEnough(password) {
+            const uc = password.match(UPPERCASE_RE);
+            const lc = password.match(LOWERCASE_RE);
+            const n = password.match(NUMBER_RE);
+            const sc = password.match(SPECIAL_CHAR_RE);
+            const nr = password.match(NON_REPEATING_CHAR_RE);
+            return password.length >= minLength &&
+                !nr &&
+                uc && uc.length >= uppercaseMinCount &&
+                lc && lc.length >= lowercaseMinCount &&
+                n && n.length >= numberMinCount &&
+                sc && sc.length >= specialMinCount;
+        }
+
+        function customPassword() {
+            var password = "";
+            var randomLength = Math.floor(Math.random() * (maxLength - minLength)) + minLength;
+            while (!isStrongEnough(password)) {
+                password = generatePassword(randomLength, false, /[\w\d\?\-]/);
+            }
+            return password;
+        }
+        return customPassword();
     }
 }
 
