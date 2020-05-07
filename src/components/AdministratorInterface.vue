@@ -4,6 +4,7 @@
     <requestsAll></requestsAll>
         <messages></messages>
         <change-request-status></change-request-status>
+        <change-data></change-data>
     </v-card>
 </template>
 
@@ -12,8 +13,9 @@
     import RequestsAll from "./requestsAll";
     import ChangeRequestStatus from "./changeRequestStatus";
     import Messages from "./messages";
+    import ChangeData from "./changeData";
     export default {
         name: "AdministratorInterface",
-        components: {Messages, ChangeRequestStatus, RequestsAll, Register}
+        components: {ChangeData, Messages, ChangeRequestStatus, RequestsAll, Register}
     }
 </script>

@@ -30,9 +30,23 @@
             <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn
+                        :disabled="isButtonDisabled || isButtonDisabled1"
                         @click="auth">Вход</v-btn>
                 <v-spacer></v-spacer>
             </v-card-actions>
+            <v-snackbar
+                    v-model="snackbar"
+                    :timeout="timeout"
+            >
+                {{ textSnack }}
+                <v-btn
+                        color="blue"
+                        text
+                        @click="snackbar = false"
+                >
+                    Close
+                </v-btn>
+            </v-snackbar>
         </v-card>
 </template>
 
@@ -47,8 +61,15 @@
                 rules: {
                     required: value => !!value || 'Обязательно для заполнения',
                 },
+                snackbar: false,
+                textSnack: '',
+                timeout: 2000,
                 login: '',
                 password: '',
+                isButtonDisabled: true,
+                canSend: false,
+                isButtonDisabled1: true,
+                canSend1: false,
             }
         },
         methods: {
@@ -71,8 +92,21 @@
                         this.$cookies.set("userToken", response.data[1], "30D")
                     }
                 })
-                    .catch((error) => (console.log(error)));
+                    .catch(() => {
+                        this.textSnack='Неверный логин или пароль';
+                        this.snackbar=true
+                    });
             }
-            }
+            },
+        watch:{
+            login: function () {
+                this.canSend = this.login.length >= 1;
+                this.isButtonDisabled = !this.canSend;
+            },
+            password: function () {
+                this.canSend1 = this.password.length >= 1;
+                this.isButtonDisabled1 = !this.canSend1;
+            },
+        }
         }
 </script>

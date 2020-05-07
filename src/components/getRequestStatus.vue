@@ -8,7 +8,8 @@
             {{status}}
         </v-card-text>
         <v-card-actions>
-            <v-btn @click="getStatus">Проверить статус</v-btn>
+            <v-btn :disabled="isButtonDisabled "
+                    @click="getStatus">Проверить статус</v-btn>
         </v-card-actions>
     </v-card>
 </template>
@@ -21,6 +22,8 @@
             return {
                 statusId: '',
                 status: '',
+                isButtonDisabled: true,
+                canSend: false,
             }
         },
         methods:
@@ -38,7 +41,13 @@
                     })
                         .catch((error) => (console.log(error)));
                 }
+            },
+        watch: {
+            statusId: function () {
+                this.canSend = this.statusId.length != '';
+                this.isButtonDisabled = !this.canSend;
             }
+        }
     }
 </script>
 

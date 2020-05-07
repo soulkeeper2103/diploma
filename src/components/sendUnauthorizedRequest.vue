@@ -40,8 +40,23 @@
             </v-text-field>
         </v-card-text>
         <v-card-actions>
-            <v-btn @click="sendRequest">Отправить</v-btn>
+            <v-btn
+                    :disabled="isButtonDisabled ||  isButtonDisabled1 ||  isButtonDisabled2 || isButtonDisabled3 || isButtonDisabled4"
+                    @click="sendRequest">Отправить</v-btn>
         </v-card-actions>
+        <v-snackbar
+                v-model="snackbar"
+                :timeout="timeout"
+        >
+            {{ textSnack }}
+            <v-btn
+                    color="blue"
+                    text
+                    @click="snackbar = false"
+            >
+                Close
+            </v-btn>
+        </v-snackbar>
     </v-card>
 </template>
 
@@ -63,12 +78,27 @@
                         phone: this.phone,
                         email: this.email
                     },
-                }).then((response) => (console.log(response)))
+                }).then((response) => {
+                    if(response.data[0].res==2) {this.textSnack='Комбинация телефона и email в системе не найдена! Заявка не отправлена', this.snackbar=true;}
+                    if(response.data[0].res==3) {this.textSnack='Телефон или Email уже зарегистрированы в системе! Заявка не отправлена', this.snackbar=true;}
+                    if(response.data[0].res==1) {this.textSnack='Заявка отправлена. Номер вашей заявки выслан на ваш e-mail', this.snackbar=true;}
+                    if(response.data[0].res==0) {this.textSnack='Заявка отправлена. Номер вашей заявки и Ваши учетные данные для доступа к личному кабинету высланы на ваш e-mail', this.snackbar=true;}
+                })
                     .catch((error) => (console.log(error)));
             }
         },
         data() {
             return {
+                isButtonDisabled: true,
+                canSend: false,
+                isButtonDisabled1: true,
+                canSend1: false,
+                isButtonDisabled2: true,
+                canSend2: false,
+                isButtonDisabled3: true,
+                canSend3: false,
+                isButtonDisabled4: true,
+                canSend4: false,
                 items: ['Архивная обработка', 'Дезинфекция', 'Переплет', 'Электронный архив', 'Хранение', 'Уничтожение', 'Сканирование'],
                 rules: {
                     required: value => !!value || 'Обязательно для заполнения',
@@ -87,7 +117,34 @@
                 email: '',
                 text: '',
                 type: '',
+                snackbar: false,
+                textSnack: '',
+                timeout: 2000,
             }
         },
+        watch: {
+            name: function() {
+                this.canSend = this.name.length >= 2;
+                this.isButtonDisabled = !this.canSend;
+            },
+            email: function () {
+                const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                this.canSend2 = pattern.test(this.email)
+                this.isButtonDisabled2 = !this.canSend2;
+            },
+            type: function () {
+                this.canSend3 = this.type.length >= 2;
+                this.isButtonDisabled3 = !this.canSend3;
+            },
+            text: function () {
+                this.canSend4 = this.text.length >= 2;
+                this.isButtonDisabled4 = !this.canSend4;
+            },
+            phone: function () {
+                const pattern=/^([+])([7])([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])?$/
+                this.canSend1 = pattern.test(this.phone)
+                this.isButtonDisabled1 = !this.canSend1;
+            }
+        }
     }
 </script>

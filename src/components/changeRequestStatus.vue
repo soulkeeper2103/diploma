@@ -13,7 +13,8 @@
                     label="Статус заявки">
             </v-select>
         </v-card-text>
-        <v-btn @click="changeRequestStatus">Изменить</v-btn>
+        <v-btn :disabled="isButtonDisabled ||  isButtonDisabled1"
+                @click="changeRequestStatus">Изменить</v-btn>
     </v-card>
 </template>
 
@@ -23,6 +24,10 @@
         name: "changeRequestStatus",
         data () {
             return {
+                isButtonDisabled: true,
+                canSend: false,
+                isButtonDisabled1: true,
+                canSend1: false,
                 select: [],
                 items: [],
                 status: [],
@@ -54,7 +59,7 @@
         let token = this.$cookies.get('userToken')
         axios({
                   method: 'GET',
-                  url: 'http://localhost:8000/requests/',
+                  url: 'http://localhost:8000/requestsAll/',
                   headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
               }).then((response) => {
                   let result = []
@@ -63,7 +68,17 @@
             console.log(response)
         })
             .catch((error) => (console.log(error)));
-    }
+    },
+        watch: {
+            select: function () {
+                this.canSend1 = this.select.length !='';
+                this.isButtonDisabled1 = !this.canSend1;
+            },
+            status: function () {
+                this.canSend = this.status.length >= 2;
+                this.isButtonDisabled = !this.canSend;
+            }
+        }
     }
 </script>
 

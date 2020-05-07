@@ -13,7 +13,8 @@
             ></v-select>
         </v-card-text>
         <v-card-actions>
-            <v-btn @click="sendRequest">Отправить</v-btn>
+            <v-btn :disabled="isButtonDisabled ||  isButtonDisabled1"
+                    @click="sendRequest">Отправить</v-btn>
         </v-card-actions>
     </v-card>
 </template>
@@ -27,6 +28,10 @@
                 items: ['Архивная обработка', 'Дезинфекция', 'Переплет', 'Электронный архив', 'Хранение', 'Уничтожение', 'Сканирование'],
                 text: '',
                 type: '',
+                isButtonDisabled: true,
+                canSend: false,
+                isButtonDisabled1: true,
+                canSend1: false,
             }
         },
         methods:
@@ -46,6 +51,16 @@
                  }).then((response) => (console.log(response)))
                      .catch((error) => (console.log(error)));
              }
-            }
+            },
+        watch:{
+            type: function () {
+                this.canSend = this.type.length >= 2;
+                this.isButtonDisabled = !this.canSend;
+            },
+            text: function () {
+                this.canSend1 = this.text.length >= 2;
+                this.isButtonDisabled1 = !this.canSend1;
+            },
+        }
     }
 </script>

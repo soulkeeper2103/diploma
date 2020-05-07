@@ -7,15 +7,6 @@
                   v-text="'Регистрация'"
           />
           <v-text-field
-                  v-model="login"
-                  label="Логин"
-                  outlined
-                  clearable
-                  :rules="[rules.required]"
-                  maxlength="24"
-                  placeholder="Логин"
-          />
-          <v-text-field
                   v-model="name"
                   label="Имя"
                   outlined
@@ -49,6 +40,7 @@
           </v-radio-group>
           <v-card-actions>
               <v-btn
+                      :disabled="isButtonDisabled ||  isButtonDisabled1 ||  isButtonDisabled2 "
               @click="registerNewUser">Зарегистрировать</v-btn></v-card-actions>
       </v-card>
 </template>
@@ -60,6 +52,12 @@ export default {
     components: {},
     data() {
         return {
+            isButtonDisabled: true,
+            canSend: false,
+            isButtonDisabled1: true,
+            canSend1: false,
+            isButtonDisabled2: true,
+            canSend2: false,
             rules: {
                 required: value => !!value || 'Обязательно для заполнения',
                 email: value => {
@@ -72,11 +70,10 @@ export default {
                     return pattern.test(value) || 'Неверный номер телефона'
                 }
             },
-            login: '',
             name: '',
             phone: '',
             email: '',
-            type: '',
+            type: 'Клиент',
 
         }
     },
@@ -89,7 +86,6 @@ export default {
                 headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                 data: {
                     token: token,
-                    login: this.login,
                     name: this.name,
                     email: this.email,
                     phone: this.phone,
@@ -97,6 +93,22 @@ export default {
                 },
             }).then((response) => (console.log(response)))
                 .catch((error) => (console.log(error)));
+        }
+    },
+    watch: {
+        name: function() {
+            this.canSend = this.name.length >= 2;
+            this.isButtonDisabled = !this.canSend;
+        },
+        email: function () {
+            const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            this.canSend2 = pattern.test(this.email)
+            this.isButtonDisabled2 = !this.canSend2;
+        },
+        phone: function () {
+            const pattern=/^([+])([7])([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])?$/
+            this.canSend1 = pattern.test(this.phone)
+            this.isButtonDisabled1 = !this.canSend1;
         }
     }
 }

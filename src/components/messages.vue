@@ -13,7 +13,7 @@
                     </v-btn>
                 </template>
 
-                <v-card>
+                <v-card class="pa-5 mx-auto">
                     <v-card-title
                             primary-title
                     >
@@ -31,6 +31,7 @@
                     <v-card-actions>
                         <v-spacer></v-spacer>
                         <v-btn
+                                :disabled="isButtonDisabled ||  isButtonDisabled1"
                                 @click="sendMessage"
                         >
                             Отправить
@@ -57,6 +58,10 @@
         name: "messages",
         data() {
             return {
+                isButtonDisabled: true,
+                canSend: false,
+                isButtonDisabled1: true,
+                canSend1: false,
                 messageText: '',
                 select: [],
                 items: [],
@@ -138,5 +143,19 @@
             })
                 .catch((error) => (console.log(error)));
         },
+        watch: {
+            messageText: function() {
+                this.canSend = this.messageText.length >= 2;
+                this.isButtonDisabled = !this.canSend;
+            },
+            select: function () {
+                this.canSend1 = this.select.length >= 2;
+                this.isButtonDisabled1 = !this.canSend1;
+            },
+            dialog: function () {
+                this.messageText=''
+                this.select=''
+            }
+            }
     }
 </script>

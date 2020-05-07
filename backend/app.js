@@ -5,7 +5,7 @@ const sql = require('mssql/msnodesqlv8');
 const jwt = require('jsonwebtoken');
 const generatePassword = require('password-generator');
 const nodemailer = require('nodemailer');
-var UsernameGenerator = require('username-generator');
+const UsernameGenerator = require('username-generator');
 const config = {
     user: "archiveClient",
     password: "password",
@@ -51,8 +51,11 @@ class Application {
         app.get('/receivedMessages',  this.getReceivedMessages.bind(this));
         app.get('/requestsStatus/:id',  this.getRequestStatusById.bind(this));
         app.get('/documents',  this.getDocumentsByLogin.bind(this));
+        app.get('/user',  this.getDataByLogin.bind(this));
         app.post('/registerNewUser', jsonParser, this.registerNewUser.bind(this));
         app.post('/sendRequest', jsonParser, this.sendRequest.bind(this));
+        app.post('/changeData', jsonParser, this.changeData.bind(this));
+        app.post('/changePassword', jsonParser, this.changePassword.bind(this));
         app.post('/sendUnauthorizedRequest', jsonParser, this.sendUnauthorizedRequest.bind(this));
         app.post('/sendMessage', jsonParser, this.sendMessage.bind(this));
         app.post('/sendFeedback', jsonParser, this.sendFeedback.bind(this));
@@ -70,6 +73,21 @@ class Application {
                 .execute('getSendMessages')
         }).then(result => {
             res.send(result.recordsets);
+        }).catch(err => {
+            console.dir(err)
+        });
+    }
+
+    getDataByLogin(req, res) {
+        if (this.checkToken(req.get('Token'))==1) return
+        res = this.setHeaders(res);
+        sql.connect(config).then(pool => {
+            // Stored procedure
+            return pool.request()
+                .input('login', sql.VarChar(24), jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].login)
+                .execute('getDataByLogin')
+        }).then(result => {
+            res.send(result.recordset);
         }).catch(err => {
             console.dir(err)
         });
@@ -161,11 +179,12 @@ class Application {
     {
         if (this.checkToken(req.body.token)==1) return
         res = this.setHeaders(res);
+        let username = UsernameGenerator.generateUsername();
         let pass = this.generateStrongPassword();
          sql.connect(config).then(pool => {
              // Stored procedure
              return pool.request()
-                .input('login', sql.VarChar(24), req.body.login)
+                .input('login', sql.VarChar(24), username)
                 .input('password', sql.VarChar(99), pass)
                 .input('name', sql.VarChar(90), req.body.name)
                 .input('phone', sql.VarChar(12), req.body.phone)
@@ -179,7 +198,7 @@ class Application {
                  to:  req.body.email,
                  subject: "Ваш логин и пароль для входа в систему Архива Кнопка",
                  text: req.body.name + ",Вы успешно зарегистрированы в системе Архива Кнопка. Поздравляем!\n" +
-                     "Ваш логин: " + req.body.login + "\nВаш пароль: " + pass,
+                     "Ваш логин: " + username + "\nВаш пароль: " + pass,
              };
              transporter.sendMail(message, (error, info) => {
                  if (error) {
@@ -190,7 +209,6 @@ class Application {
              res.status(200).json({})
          }).catch(err => {
              console.dir(err)
-              res.status(404).json({})
          });
 
     }
@@ -210,17 +228,68 @@ class Application {
             res.status(200).json({})
         }).catch(err => {
             console.dir(err)
-            res.status(404).json({})
         });
 
     }
+
+    changePassword(req, res)
+    {
+        if (this.checkToken(req.body.token)==1) return
+        res = this.setHeaders(res);
+
+        sql.connect(config).then(pool => {
+            // Stored procedure
+            return pool.request()
+                .input('login', sql.VarChar(24), jwt.verify(req.body.token, '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].login)
+                .input('oldPassword', sql.VarChar(99), req.body.oldPassword)
+                .input('newPassword', sql.VarChar(99), req.body.newPassword)
+                .execute('changePassword')
+        }).then(result => {
+            console.dir("success")
+            res.send(result.recordset)
+        }).catch(err => {
+            console.dir(err)
+        });
+
+    }
+
+    changeData(req, res)
+    {
+        if (this.checkToken(req.body.token)==1) return
+        res = this.setHeaders(res);
+
+        sql.connect(config).then(pool => {
+            // Stored procedure
+            return pool.request()
+                .input('login', sql.VarChar(24), req.body.login)
+                .input('oldLogin', sql.VarChar(24), jwt.verify(req.body.token, '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].login)
+                .input('phone', sql.VarChar(12), req.body.phone)
+                .input('name', sql.VarChar(90), req.body.name)
+                .input('password', sql.VarChar(99), req.body.password)
+                .input('email', sql.VarChar(30), req.body.email)
+                .execute('changeData')
+        }).then(result => {
+            console.dir("success")
+            if(!result.recordset[0].res) {
+                let payload = result.recordset
+                let token = jwt.sign({payload}, '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?', {algorithm: 'HS512'});
+                payload.push(token);
+                res.send(payload)
+                return
+            }
+            res.send(result.recordset)
+        }).catch(err => {
+            console.dir(err)
+        });
+
+    }
+
     sendUnauthorizedRequest(req, res)
     {
         let pass = this.generateStrongPassword();
         let username = UsernameGenerator.generateUsername();
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
-            // Stored procedure
             return pool.request()
                 .input('login', sql.VarChar(24), username)
                 .input('comment', sql.Text, req.body.text)
@@ -231,15 +300,29 @@ class Application {
                 .input('email', sql.VarChar(30), req.body.email)
                 .execute('sendUnauthorizedRequest')
         }).then(result => {
-            console.log(result.recordset[0])
-            if(result.recordset[0].res==0) {
-                var message = {
+            console.dir(result.recordset[0])
+            res.send(result.recordset)
+            let message
+            if(result.recordset[0].res==0)
+            {
+                message = {
                     from: "soulkeeper2103@yandex.ru",
                     to: req.body.email,
                     subject: "Заявка отправлена",
-                    text: req.body.name + ",Заявка успешно отправлена. Поздравляем!\n Ваши учетные данные от личного кабинета\n" +
+                    text: req.body.name + ",Заявка успешно отправлена. Поздравляем! Номер заявки: " + result.recordset[0].id + "\n Ваши учетные данные от личного кабинета\n" +
                         "Ваш логин: " + username + "\nВаш пароль: " + pass,
                 };
+            }
+            if(result.recordset[0].res==1)
+            {
+                message = {
+                    from: "soulkeeper2103@yandex.ru",
+                    to: req.body.email,
+                    subject: "Заявка отправлена",
+                    text: result.recordset[0].name + ",Заявка успешно отправлена. Поздравляем!  Номер заявки:" + result.recordset[0].id,
+                };
+            }
+            if(result.recordset[0].res==1||result.recordset[0].res==0)
                 transporter.sendMail(message, (error, info) => {
                     if (error) {
                         console.log('Error occurred');
@@ -247,27 +330,8 @@ class Application {
                         return process.exit(1);
                     }
                 })
-            }
-            if(result.recordset[0].res==1) {
-                var message1 = {
-                    from: "soulkeeper2103@yandex.ru",
-                    to: req.body.email,
-                    subject: "Заявка отправлена",
-                    text: req.body.name + ",Заявка успешно отправлена. Поздравляем!",
-                };
-                transporter.sendMail(message1, (error, info) => {
-                    if (error) {
-                        console.log('Error occurred');
-                        console.log(error.message);
-                        return process.exit(1);
-                    }
-                })
-            }
-            console.dir("success")
-            res.status(200).json({})
         }).catch(err => {
             console.dir(err)
-            res.status(404).json({})
         });
 
     }
@@ -287,7 +351,6 @@ class Application {
             res.status(200).json({})
         }).catch(err => {
             console.dir(err)
-            res.status(404).json({})
         });
 
     }
@@ -308,7 +371,6 @@ class Application {
             res.status(200).json({})
         }).catch(err => {
             console.dir(err)
-            res.status(404).json({})
         });
 
     }
@@ -328,7 +390,6 @@ class Application {
             res.status(200).json({})
         }).catch(err => {
             console.dir(err)
-            res.status(404).json({})
         });
 
     }
@@ -343,7 +404,7 @@ class Application {
                 .input('password', sql.VarChar(99), req.body.password)
                 .execute('auth')
         }).then(result => {
-            if(result.recordset==''){res.status(400).send("invalid pass or login");return}
+            if(result.recordset==''){res.status(403).send("invalid pass or login");return}
             console.dir(result)
             let payload = result.recordset
             let token = jwt.sign({payload}, '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?', { algorithm: 'HS512' });
@@ -351,7 +412,6 @@ class Application {
             res.send(payload)
         }).catch(err => {
             console.dir(err)
-            res.status(404).json({})
         });
     }
     setHeaders(res)

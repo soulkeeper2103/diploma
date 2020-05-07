@@ -3,6 +3,7 @@
         <requests></requests>
         <documents></documents>
         <messages></messages>
+        <change-data></change-data>
         <get-request-status></get-request-status>
         <send-request></send-request>
         <send-feedbacks></send-feedbacks>
@@ -16,8 +17,9 @@
     import Requests from "./requests";
     import Messages from "./messages";
     import SendFeedbacks from "./sendFeedbacks";
+    import ChangeData from "./changeData";
     export default {
         name: "ClientInterface",
-        components: {SendFeedbacks, Messages, Requests, Documents, SendRequest, GetRequestStatus},
+        components: {ChangeData, SendFeedbacks, Messages, Requests, Documents, SendRequest, GetRequestStatus},
     }
 </script>
