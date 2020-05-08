@@ -42,6 +42,19 @@
               <v-btn
                       :disabled="isButtonDisabled ||  isButtonDisabled1 ||  isButtonDisabled2 "
               @click="registerNewUser">Зарегистрировать</v-btn></v-card-actions>
+          <v-snackbar
+                  v-model="snackbar"
+                  :timeout="timeout"
+          >
+              {{ textSnack }}
+              <v-btn
+                      color="blue"
+                      text
+                      @click="snackbar = false"
+              >
+                  Close
+              </v-btn>
+          </v-snackbar>
       </v-card>
 </template>
 
@@ -74,6 +87,9 @@ export default {
             phone: '',
             email: '',
             type: 'Клиент',
+            snackbar: false,
+            textSnack: '',
+            timeout: 2000
 
         }
     },
@@ -91,7 +107,23 @@ export default {
                     phone: this.phone,
                     type: this.type
                 },
-            }).then((response) => (console.log(response)))
+            }).then((response) => {
+                if(response.data[0].res==1)
+                {
+                    this.textSnack='Данный email уже зарегистрирован в системе'
+                    this.snackbar=true;
+                }
+                if(response.data[0].res==2)
+                {
+                    this.textSnack='Данный телефон уже зарегистрирован в системе'
+                    this.snackbar=true;
+                }
+                if(response.data[0].res==3)
+                {
+                    this.textSnack='Произошла ошибка регистрации. Пожалуйста, повторите попытку'
+                    this.snackbar=true;
+                }
+            })
                 .catch((error) => (console.log(error)));
         }
     },

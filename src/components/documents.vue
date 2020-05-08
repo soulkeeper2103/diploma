@@ -2,12 +2,15 @@
     <v-card>
         <v-card-title>Ваши документы</v-card-title>
     <v-data-table
+            v-model="selected"
+            show-select
             v-bind:key="doc"
             :items="doc"
             v-for="doc in documents"
             :headers="headers"
     >
     </v-data-table>
+        <v-card-actions><v-btn @click="orderDocuments" :disabled="isButtonDisabled">Заказать документы на email</v-btn></v-card-actions>
     </v-card>
 </template>
 
@@ -17,6 +20,9 @@
         name: "documents",
         data() {
             return {
+                isButtonDisabled: true,
+                canSend: false,
+                selected: [],
                 documents: '',
                 headers: [
                     {
@@ -30,6 +36,23 @@
                 ],
             }
         },
+        methods:{
+            orderDocuments(){
+                let token = this.$cookies.get('userToken')
+                axios({
+                    method: 'POST',
+                    url: 'http://localhost:8000/orderDocuments',
+                    headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
+                    data:{
+                        token:  token,
+                        docs: this.selected,
+                    }
+                }).then((response) => {
+                    console.log(response)
+                })
+                    .catch((error) => (console.log(error)));
+            }
+        },
         beforeMount() {
             let token = this.$cookies.get('userToken')
             axios({
@@ -41,7 +64,13 @@
                 console.log(response)
             })
                 .catch((error) => (console.log(error)));
-        }
+        },
+        watch: {
+               selected: function(){
+                   this.canSend = this.selected.length >= 1;
+                   this.isButtonDisabled = !this.canSend;
+               }
+            }
     }
 </script>
 

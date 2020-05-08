@@ -53,6 +53,7 @@ class Application {
         app.get('/documents',  this.getDocumentsByLogin.bind(this));
         app.get('/user',  this.getDataByLogin.bind(this));
         app.post('/registerNewUser', jsonParser, this.registerNewUser.bind(this));
+        app.post('/orderDocuments', jsonParser, this.orderDocuments.bind(this));
         app.post('/sendRequest', jsonParser, this.sendRequest.bind(this));
         app.post('/changeData', jsonParser, this.changeData.bind(this));
         app.post('/changePassword', jsonParser, this.changePassword.bind(this));
@@ -178,38 +179,108 @@ class Application {
     registerNewUser(req, res)
     {
         if (this.checkToken(req.body.token)==1) return
-        res = this.setHeaders(res);
         let username = UsernameGenerator.generateUsername();
-        let pass = this.generateStrongPassword();
-         sql.connect(config).then(pool => {
-             // Stored procedure
-             return pool.request()
+        let exist
+        res = this.setHeaders(res);
+        sql.connect(config).then(pool => {
+            // Stored procedure
+            return pool.request()
                 .input('login', sql.VarChar(24), username)
-                .input('password', sql.VarChar(99), pass)
-                .input('name', sql.VarChar(90), req.body.name)
                 .input('phone', sql.VarChar(12), req.body.phone)
                 .input('email', sql.VarChar(30), req.body.email)
-                .input('type', sql.VarChar(13), req.body.type)
-                .execute('registerNewUser')
-         }).then(result => {
-             console.dir("success")
-             var message = {
-                 from: "soulkeeper2103@yandex.ru",
-                 to:  req.body.email,
-                 subject: "Ваш логин и пароль для входа в систему Архива Кнопка",
-                 text: req.body.name + ",Вы успешно зарегистрированы в системе Архива Кнопка. Поздравляем!\n" +
-                     "Ваш логин: " + username + "\nВаш пароль: " + pass,
-             };
-             transporter.sendMail(message, (error, info) => {
-                 if (error) {
-                     console.log('Error occurred');
-                     console.log(error.message);
-                     return process.exit(1);
-                 }})
-             res.status(200).json({})
-         }).catch(err => {
-             console.dir(err)
-         });
+                .execute('checkExist')
+        }).then(result => {
+            exist=result.recordset[0].res
+            if(result.recordset[0].res!=0) {res.send(result.recordset); res.end; return}
+        }).catch(err => {
+            console.dir(err)
+        });
+        let pass = this.generateStrongPassword();
+        if(exist==0) {
+            sql.connect(config).then(pool => {
+                // Stored procedure
+                return pool.request()
+                    .input('login', sql.VarChar(24), username)
+                    .input('password', sql.VarChar(99), pass)
+                    .input('name', sql.VarChar(90), req.body.name)
+                    .input('phone', sql.VarChar(12), req.body.phone)
+                    .input('email', sql.VarChar(30), req.body.email)
+                    .input('type', sql.VarChar(13), req.body.type)
+                    .execute('registerNewUser')
+            }).then(result => {
+                console.dir("success")
+                var message = {
+                    from: "soulkeeper2103@yandex.ru",
+                    to: req.body.email,
+                    subject: "Ваш логин и пароль для входа в систему Архива Кнопка",
+                    text: req.body.name + ",Вы успешно зарегистрированы в системе Архива Кнопка. Поздравляем!\n" +
+                        "Ваш логин: " + username + "\nВаш пароль: " + pass,
+                };
+                transporter.sendMail(message, (error, info) => {
+                    if (error) {
+                        console.log('Error occurred');
+                        console.log(error.message);
+                        return process.exit(1);
+                    }
+                })
+                res.status(200).json({})
+            }).catch(err => {
+                console.dir(err)
+            });
+        }
+
+    }
+    orderDocuments(req, res)
+    {
+        let message = {
+            from: "soulkeeper2103@yandex.ru",
+            to: '',
+            subject: "Ваши документы",
+            text: '',
+            attachments: []
+        };
+
+        if (this.checkToken(req.body.token)==1) return
+        res = this.setHeaders(res);
+
+        for (let i in req.body.docs)
+        {sql.connect(config).then(pool => {
+            // Stored procedure
+            return pool.request()
+                .input('ids', sql.Int,  req.body.docs[i].id)
+                .execute('getDocuments')
+        }).then(result => {
+            console.dir(result.recordset)
+            message.attachments.push({
+                //filename: result.recordset[0].src.replace(/^.*[\\/]/, ''),
+                path:  result.recordset[0].src
+            })
+        }).catch(err => {
+            console.dir(err)
+        });}
+
+        sql.connect(config).then(pool => {
+            // Stored procedure
+            return pool.request()
+                .input('login', sql.VarChar(24), jwt.verify(req.body.token, '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].login)
+                .execute('getDataByLogin')
+        }).then(result => {
+            message.to=result.recordset[0].email
+            message.text=result.recordset[0].name + ", Заказ документов выполнен успешно!"
+            console.dir('sended')
+            res.status(200)
+            transporter.sendMail(message, (error, info) => {
+                if (error) {
+                    console.log('Error occurred');
+                    console.log(error.message);
+                    return process.exit(1);
+                }
+            })
+            res.status(200).json({})
+        }).catch(err => {
+            console.dir(err)
+        });
+
 
     }
     sendRequest(req, res)
