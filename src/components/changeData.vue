@@ -1,6 +1,7 @@
 <template>
-    <v-card>
-        <v-card-title>Личные данные<v-spacer></v-spacer><v-btn @click="isChange=!isChange"><v-icon>{{'mdi-account-edit'}}</v-icon>Редактировать данные</v-btn></v-card-title>
+    <v-card flat
+            width="50%">
+        <v-card-title>Личные данные<v-spacer></v-spacer><v-btn :elevation=0 @click="isChange=!isChange"><v-icon>{{'mdi-account-edit'}}</v-icon>Редактировать данные</v-btn></v-card-title>
         <v-text-field
                 :rules="[rules.required, rules.lengthP]"
                 v-model="login"
@@ -51,10 +52,13 @@
                 @click:append="show = !show"
                 :filled="!isChange"
                 :readonly="!isChange"
+                v-if="isChange"
         ></v-text-field>
         <v-card-actions>
             <v-btn :disabled="isButtonDisabled ||  isButtonDisabled1 ||  isButtonDisabled2 ||  isButtonDisabled3 ||  isButtonDisabled4"
-                    v-if="isChange" @click="changeData">Сохранить изменения</v-btn>
+                   :elevation=0
+                   v-if="isChange"
+                   @click="changeData">Сохранить изменения</v-btn>
         <v-spacer></v-spacer>
         <v-dialog
                 v-model="dialog"
@@ -62,6 +66,7 @@
         >
             <template v-slot:activator="{ on }">
                 <v-btn
+                        :elevation=0
                         v-on="on"
                 >
                     Сменить пароль
@@ -95,6 +100,7 @@
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn
+                            :elevation=0
                             :disabled="isButtonDisabled5 ||  isButtonDisabled6"
                             @click="changePassword"
                     >
@@ -175,7 +181,7 @@
                 let token = this.$cookies.get('userToken')
                 axios({
                     method: 'POST',
-                    url: 'http://localhost:8000/changePassword',
+                    url: 'http://localhost/api/changePassword',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                     data: {
                         token: token,
@@ -198,7 +204,7 @@
                 let token = this.$cookies.get('userToken')
                 axios({
                     method: 'POST',
-                    url: 'http://localhost:8000/changeData',
+                    url: 'http://localhost/api/changeData',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                     data: {
                         token: token,
@@ -228,7 +234,7 @@
             let token = this.$cookies.get('userToken')
             axios({
                 method: 'GET',
-                url: 'http://localhost:8000/user',
+                url: 'http://localhost/api/user',
                 headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
                 data: {
                 },

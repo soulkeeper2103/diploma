@@ -1,5 +1,7 @@
 <template>
-    <v-card>
+    <v-card
+            flat
+            width="50%">
         <v-card-title>Сообщения <v-spacer></v-spacer>
             <v-dialog
                     v-model="dialog"
@@ -7,6 +9,7 @@
             >
                 <template v-slot:activator="{ on }">
                     <v-btn
+                            :elevation=0
                             v-on="on"
                     >
                         Написать Сообщение
@@ -25,7 +28,7 @@
                     <v-combobox
                             v-model="select"
                             :items="items"
-                            label="Пользователь"
+                            label="Получатель"
                     ></v-combobox>
                     <v-textarea v-model="messageText"></v-textarea>
                     <v-card-actions>
@@ -49,6 +52,19 @@
                 :items="mesR"
                 v-for="mesR in messagesR"
                 :headers="headersR"></v-data-table>
+        <v-snackbar
+                v-model="snackbar"
+                :timeout="timeout"
+        >
+            {{ textSnack }}
+            <v-btn
+                    color="blue"
+                    text
+                    @click="snackbar = false"
+            >
+                Close
+            </v-btn>
+        </v-snackbar>
     </v-card>
 </template>
 
@@ -58,6 +74,9 @@
         name: "messages",
         data() {
             return {
+                snackbar: false,
+                textSnack: '',
+                timeout: 2000,
                 isButtonDisabled: true,
                 canSend: false,
                 isButtonDisabled1: true,
@@ -97,7 +116,7 @@
               let token = this.$cookies.get('userToken')
               axios({
                   method: 'POST',
-                  url: 'http://localhost:8000/sendMessage',
+                  url: 'http://localhost/api/sendMessage',
                   headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                   data: {
                       token: token,
@@ -109,13 +128,15 @@
               this.dialog=false;
               this.messageText = '';
               this.select = [];
+              this.textSnack='Сообщение отправлено'
+              this.snackbar=true;
           }
         },
         beforeMount() {
             let token = this.$cookies.get('userToken')
             axios({
                 method: 'GET',
-                url: 'http://localhost:8000/SendMessages',
+                url: 'http://localhost/api/SendMessages',
                 headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token': token},
             }).then((response) => {
                 this.messages = response.data
@@ -124,7 +145,7 @@
                 .catch((error) => (console.log(error)));
             axios({
                 method: 'GET',
-                url: 'http://localhost:8000/ReceivedMessages',
+                url: 'http://localhost/api/ReceivedMessages',
                 headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token': token},
             }).then((response) => {
                 this.messagesR = response.data
@@ -133,7 +154,7 @@
                 .catch((error) => (console.log(error)));
             axios({
                 method: 'GET',
-                url: 'http://localhost:8000/Users',
+                url: 'http://localhost/api/Users',
                 headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
             }).then((response) => {
                 let result = []

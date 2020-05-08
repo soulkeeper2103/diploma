@@ -1,5 +1,7 @@
 <template>
-    <v-card>
+    <v-card
+            flat
+            width="50%">
         <v-card-text>
             <v-card-title>Отправить заявку</v-card-title>
             <v-text-field
@@ -41,6 +43,7 @@
         </v-card-text>
         <v-card-actions>
             <v-btn
+                    :elevation=0
                     :disabled="isButtonDisabled ||  isButtonDisabled1 ||  isButtonDisabled2 || isButtonDisabled3 || isButtonDisabled4"
                     @click="sendRequest">Отправить</v-btn>
         </v-card-actions>
@@ -69,7 +72,7 @@
             {
                 axios({
                     method: 'POST',
-                    url: 'http://localhost:8000/sendUnauthorizedRequest',
+                    url: 'http://localhost/api/sendUnauthorizedRequest',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                     data: {
                         text: this.text,

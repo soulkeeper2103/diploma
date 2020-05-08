@@ -1,5 +1,7 @@
 <template>
-    <v-card>
+    <v-card
+            flat
+            width="50%">
         <v-card-title>Ваши документы</v-card-title>
     <v-data-table
             v-model="selected"
@@ -26,7 +28,7 @@
                 documents: '',
                 headers: [
                     {
-                        text: 'Номер заявки',
+                        text: 'Номер документа',
                         value: 'id',
                     },
                     {
@@ -41,7 +43,7 @@
                 let token = this.$cookies.get('userToken')
                 axios({
                     method: 'POST',
-                    url: 'http://localhost:8000/orderDocuments',
+                    url: 'http://localhost/api/orderDocuments',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                     data:{
                         token:  token,
@@ -57,7 +59,7 @@
             let token = this.$cookies.get('userToken')
             axios({
                 method: 'GET',
-                url: 'http://localhost:8000/documents',
+                url: 'http://localhost/api/documents',
                 headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
             }).then((response) => {
                 this.documents = response.data

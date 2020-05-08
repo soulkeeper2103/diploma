@@ -1,6 +1,7 @@
 <template>
       <v-card
-      width="33%">
+              flat
+      width="50%">
           <v-card-text
                   class="headline
                             text-center"
@@ -40,6 +41,7 @@
           </v-radio-group>
           <v-card-actions>
               <v-btn
+                      :elevation=0
                       :disabled="isButtonDisabled ||  isButtonDisabled1 ||  isButtonDisabled2 "
               @click="registerNewUser">Зарегистрировать</v-btn></v-card-actions>
           <v-snackbar
@@ -98,7 +100,7 @@ export default {
             let token = this.$cookies.get('userToken')
             axios({
                 method: 'POST',
-                url: 'http://localhost:8000/registerNewUser',
+                url: 'http://localhost/api/registerNewUser',
                 headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                 data: {
                     token: token,

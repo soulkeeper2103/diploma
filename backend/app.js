@@ -44,24 +44,26 @@ class Application {
         let app = this.expressApp;
         let jsonParser = bodyParser.json();
         app.use(express.json())
-        app.get('/requests',  this.getRequestsByLogin.bind(this));
-        app.get('/requestsAll',  this.getRequests.bind(this));
-        app.get('/users',  this.getUsers.bind(this));
-        app.get('/sendMessages',  this.getSendMessages.bind(this));
-        app.get('/receivedMessages',  this.getReceivedMessages.bind(this));
-        app.get('/requestsStatus/:id',  this.getRequestStatusById.bind(this));
-        app.get('/documents',  this.getDocumentsByLogin.bind(this));
-        app.get('/user',  this.getDataByLogin.bind(this));
-        app.post('/registerNewUser', jsonParser, this.registerNewUser.bind(this));
-        app.post('/orderDocuments', jsonParser, this.orderDocuments.bind(this));
-        app.post('/sendRequest', jsonParser, this.sendRequest.bind(this));
-        app.post('/changeData', jsonParser, this.changeData.bind(this));
-        app.post('/changePassword', jsonParser, this.changePassword.bind(this));
-        app.post('/sendUnauthorizedRequest', jsonParser, this.sendUnauthorizedRequest.bind(this));
-        app.post('/sendMessage', jsonParser, this.sendMessage.bind(this));
-        app.post('/sendFeedback', jsonParser, this.sendFeedback.bind(this));
-        app.post('/auth', jsonParser, this.auth.bind(this));
-        app.post('/changeRequestStatus', jsonParser, this.changeRequestStatus.bind(this));
+        app.get('/api/requests',  this.getRequestsByLogin.bind(this));
+        app.get('/api/requestsAll',  this.getRequests.bind(this));
+        app.get('/api/users',  this.getUsers.bind(this));
+        app.get('/api/sendMessages',  this.getSendMessages.bind(this));
+        app.get('/api/receivedMessages',  this.getReceivedMessages.bind(this));
+        app.get('/api/requestsStatus/:id',  this.getRequestStatusById.bind(this));
+        app.get('/api/documents',  this.getDocumentsByLogin.bind(this));
+        app.get('/api/user',  this.getDataByLogin.bind(this));
+        app.post('/api/registerNewUser', jsonParser, this.registerNewUser.bind(this));
+        app.post('/api/orderDocuments', jsonParser, this.orderDocuments.bind(this));
+        app.post('/api/sendRequest', jsonParser, this.sendRequest.bind(this));
+        app.post('/api/changeData', jsonParser, this.changeData.bind(this));
+        app.post('/api/changePassword', jsonParser, this.changePassword.bind(this));
+        app.post('/api/sendUnauthorizedRequest', jsonParser, this.sendUnauthorizedRequest.bind(this));
+        app.post('/api/sendMessage', jsonParser, this.sendMessage.bind(this));
+        app.post('/api/sendFeedback', jsonParser, this.sendFeedback.bind(this));
+        app.post('/api/auth', jsonParser, this.auth.bind(this));
+        app.post('/api/changeRequestStatus', jsonParser, this.changeRequestStatus.bind(this));
+        app.post('/api/getFeedbackByLogin', jsonParser, this.getFeedbackByLogin.bind(this));
+        app.post('/api/restorePassword', jsonParser, this.restorePassword.bind(this));
     }
 
     getSendMessages(req, res) {
@@ -176,11 +178,10 @@ class Application {
             console.dir(err)
         });
     }
-    registerNewUser(req, res)
-    {
+    registerNewUser(req, res) {
         if (this.checkToken(req.body.token)==1) return
         let username = UsernameGenerator.generateUsername();
-        let exist
+        let exist=0
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
             // Stored procedure
@@ -230,8 +231,7 @@ class Application {
         }
 
     }
-    orderDocuments(req, res)
-    {
+    orderDocuments(req, res) {
         let message = {
             from: "soulkeeper2103@yandex.ru",
             to: '',
@@ -268,6 +268,7 @@ class Application {
             message.to=result.recordset[0].email
             message.text=result.recordset[0].name + ", Заказ документов выполнен успешно!"
             console.dir('sended')
+            console.dir(message)
             res.status(200)
             transporter.sendMail(message, (error, info) => {
                 if (error) {
@@ -283,8 +284,7 @@ class Application {
 
 
     }
-    sendRequest(req, res)
-    {
+    sendRequest(req, res) {
         if (this.checkToken(req.body.token)==1) return
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
@@ -303,8 +303,7 @@ class Application {
 
     }
 
-    changePassword(req, res)
-    {
+    changePassword(req, res){
         if (this.checkToken(req.body.token)==1) return
         res = this.setHeaders(res);
 
@@ -324,8 +323,7 @@ class Application {
 
     }
 
-    changeData(req, res)
-    {
+    changeData(req, res) {
         if (this.checkToken(req.body.token)==1) return
         res = this.setHeaders(res);
 
@@ -355,8 +353,7 @@ class Application {
 
     }
 
-    sendUnauthorizedRequest(req, res)
-    {
+    sendUnauthorizedRequest(req, res){
         let pass = this.generateStrongPassword();
         let username = UsernameGenerator.generateUsername();
         res = this.setHeaders(res);
@@ -406,8 +403,7 @@ class Application {
         });
 
     }
-    sendMessage(req, res)
-    {
+    sendMessage(req, res) {
         if (this.checkToken(req.body.token)==1) return
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
@@ -423,11 +419,62 @@ class Application {
         }).catch(err => {
             console.dir(err)
         });
+    }
+
+    getFeedbackByLogin(req, res) {
+        if (this.checkToken(req.body.token)==1) return
+        res = this.setHeaders(res);
+        sql.connect(config).then(pool => {
+            // Stored procedure
+            return pool.request()
+                .input('login', sql.VarChar(24), jwt.verify(req.body.token, '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].login)
+                .execute('getFeedbackByLogin')
+        }).then(result => {
+            res.status(200).send(result.recordset)
+        }).catch(err => {
+            console.dir(err)
+        });
 
     }
 
-    sendFeedback(req, res)
-    {
+    restorePassword(req, res) {
+        let pass = this.generateStrongPassword();
+        res = this.setHeaders(res);
+        sql.connect(config).then(pool => {
+            // Stored procedure
+            return pool.request()
+                .input('email', sql.VarChar(30), req.body.email)
+                .input('password', sql.VarChar(99), pass)
+                .execute('restorePassword')
+        }).then(result => {
+            res.send(result.recordset)
+            if(result.recordset[0].res==1) {res.status(200); return}
+            else
+            {
+                var message = {
+                    from: "soulkeeper2103@yandex.ru",
+                    to: req.body.email,
+                    subject: "Восстановление учетных данных",
+                    text: result.recordset[0].name + ", Ваши логин и пароль для входа в систему!\n" +
+                        "Ваш логин: " + result.recordset[0].login + "\nВаш пароль: " + pass,
+                };
+                transporter.sendMail(message, (error, info) => {
+                    if (error) {
+                        console.log('Error occurred');
+                        console.log(error.message);
+                        return process.exit(1);
+                    }
+                })
+                res.status(200).json({});
+                return
+            }
+        }).catch(err => {
+            console.dir(err)
+        });
+
+    }
+
+    sendFeedback(req, res) {
         if (this.checkToken(req.body.token)==1) return
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
@@ -446,8 +493,7 @@ class Application {
 
     }
 
-    changeRequestStatus(req, res)
-    {
+    changeRequestStatus(req, res){
         res = this.setHeaders(res);
         if (this.checkToken(req.body.token)==1) return
         sql.connect(config).then(pool => {
@@ -462,11 +508,9 @@ class Application {
         }).catch(err => {
             console.dir(err)
         });
-
     }
 
-    auth(req, res)
-    {
+    auth(req, res) {
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
             // Stored procedure
@@ -485,14 +529,12 @@ class Application {
             console.dir(err)
         });
     }
-    setHeaders(res)
-    {
+    setHeaders(res) {
         res.set({'X-Content-Type-Options':'nosniff',
             'Access-Control-Allow-Origin':'*'})
         return res
     }
-    checkToken(token)
-    {
+    checkToken(token) {
         try {
             var decoded = jwt.verify(token, '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?');
             return 0;
@@ -500,8 +542,7 @@ class Application {
             return 1;
         }
     }
-    generateStrongPassword()
-    {
+    generateStrongPassword() {
         const maxLength = 90;
         const minLength = 60;
         const uppercaseMinCount = 6;

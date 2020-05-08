@@ -1,5 +1,7 @@
 <template>
-    <v-card>
+    <v-card
+            flat
+            width="50%">
         <v-card-title>Ваши заявки</v-card-title>
         <v-data-table
                 v-bind:key="req"
@@ -18,7 +20,6 @@
         name: "requests",
         data() {
             return {
-                componentKey: 0,
                 requests: '',
                 headers: [
                     {
@@ -39,7 +40,7 @@
                 let token = this.$cookies.get('userToken')
                 axios({
                     method: 'GET',
-                    url: 'http://localhost:8000/requests/',
+                    url: 'http://localhost/api/requests/',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token': token},
                 }).then((response) => {
                     this.requests = response.data

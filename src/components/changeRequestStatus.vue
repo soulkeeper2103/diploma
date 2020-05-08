@@ -1,5 +1,6 @@
 <template>
-    <v-card>
+    <v-card  flat
+             width="50%">
         <v-card-title>Изменить статус заявки</v-card-title>
         <v-card-text>
     <v-combobox
@@ -7,11 +8,11 @@
             :items="items"
             label="Номер заявки"
     ></v-combobox>
-            <v-select
+            <v-combobox
                     v-model="status"
                     :items="statuses"
                     label="Статус заявки">
-            </v-select>
+            </v-combobox>
         </v-card-text>
         <v-btn :disabled="isButtonDisabled ||  isButtonDisabled1"
                 @click="changeRequestStatus">Изменить</v-btn>
@@ -40,16 +41,14 @@
                 let token = this.$cookies.get('userToken')
                 axios({
                     method: 'POST',
-                    url: 'http://localhost:8000/changeRequestStatus/',
-                    headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
+                    url: 'http://localhost/api/changeRequestStatus/',
+                    headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                     data:{
+                        token : token,
                         id: this.select,
                         status: this.status
                     }
                 }).then((response) => {
-                    let result = []
-                    for(let id in response.data[0]) {var v = response.data[0][id]; result.push(v.id);}
-                    this.items = result
                     console.log(response)
                 })
                     .catch((error) => (console.log(error)));
@@ -59,7 +58,7 @@
         let token = this.$cookies.get('userToken')
         axios({
                   method: 'GET',
-                  url: 'http://localhost:8000/requestsAll/',
+                  url: 'http://localhost/api/requestsAll/',
                   headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
               }).then((response) => {
                   let result = []

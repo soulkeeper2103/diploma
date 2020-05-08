@@ -1,5 +1,7 @@
 <template>
-    <v-card>
+    <v-card
+            flat
+            width="50%">
         <v-card-text>
             <v-card-title>Отправить заявку</v-card-title>
             Комментарий к заявке
@@ -13,9 +15,24 @@
             ></v-select>
         </v-card-text>
         <v-card-actions>
-            <v-btn :disabled="isButtonDisabled ||  isButtonDisabled1"
+            <v-btn
+                    :elevation=0
+                    :disabled="isButtonDisabled ||  isButtonDisabled1"
                     @click="sendRequest">Отправить</v-btn>
         </v-card-actions>
+        <v-snackbar
+                v-model="snackbar"
+                :timeout="timeout"
+        >
+            {{ textSnack }}
+            <v-btn
+                    color="blue"
+                    text
+                    @click="snackbar = false"
+            >
+                Close
+            </v-btn>
+        </v-snackbar>
     </v-card>
 </template>
 
@@ -28,6 +45,9 @@
                 items: ['Архивная обработка', 'Дезинфекция', 'Переплет', 'Электронный архив', 'Хранение', 'Уничтожение', 'Сканирование'],
                 text: '',
                 type: '',
+                snackbar: false,
+                textSnack: '',
+                timeout: 2000,
                 isButtonDisabled: true,
                 canSend: false,
                 isButtonDisabled1: true,
@@ -41,14 +61,15 @@
                  let token = this.$cookies.get('userToken')
                  axios({
                      method: 'POST',
-                     url: 'http://localhost:8000/sendRequest',
+                     url: 'http://localhost/api/sendRequest',
                      headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                      data: {
                          token: token,
                          text: this.text,
                          type: this.type
                      },
-                 }).then((response) => (console.log(response)))
+                 }).then(() => {this.textSnack='Заявка успешно отправлена'
+                 this.snackbar=true})
                      .catch((error) => (console.log(error)));
              }
             },
