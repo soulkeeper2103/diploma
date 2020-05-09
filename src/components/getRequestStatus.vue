@@ -1,7 +1,7 @@
 <template>
     <v-card
             flat
-            width="50%">
+            width="70%">
         <v-card-text>
             <v-card-title>Проверить статус заявки</v-card-title>
             <v-text-field
@@ -33,11 +33,10 @@
             {
                 getStatus()
                 {
-                    let token = this.$cookies.get('userToken')
                     axios({
                         method: 'GET',
-                        url: 'http://localhost/api/requestsStatus/' + this.statusId,
-                        headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
+                        url: 'api/requestsStatus/' + this.statusId,
+                        headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                     }).then((response) => {
                         if( response.data == ''){this.status = 'Такой заявки не существует'; }
                         else{this.status = 'СТАТУС:' + response.data[0].status}

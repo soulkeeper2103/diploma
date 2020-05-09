@@ -1,7 +1,7 @@
 <template>
     <v-card
             flat
-            width="50%">
+            width="70%">
         <v-card-title>Ваши заявки</v-card-title>
         <v-data-table
                 v-bind:key="req"
@@ -37,16 +37,29 @@
             }
         },
         beforeMount() {
+            let token = this.$cookies.get('userToken')
+            axios({
+                method: 'GET',
+                url: 'api/requests/',
+                headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token': token},
+            }).then((response) => {
+                this.requests = response.data
+                console.log(response)
+            })
+                .catch((error) => (console.log(error)));
+            setInterval(() => {
                 let token = this.$cookies.get('userToken')
                 axios({
                     method: 'GET',
-                    url: 'http://localhost/api/requests/',
+                    url: 'api/requests/',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token': token},
                 }).then((response) => {
                     this.requests = response.data
                     console.log(response)
                 })
                     .catch((error) => (console.log(error)));
+            }, 30000)
+
 
         },
     }

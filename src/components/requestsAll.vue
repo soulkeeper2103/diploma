@@ -1,7 +1,7 @@
 <template>
     <v-card
             flat
-            width="50%">
+            width="70%">
         <v-card-title>Заявки</v-card-title>
         <v-data-table
                 show-expand
@@ -92,7 +92,7 @@
                 let token = this.$cookies.get('userToken')
                 axios({
                     method: 'POST',
-                    url: 'http://localhost/api/changeRequestStatus/',
+                    url: 'api/changeRequestStatus/',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                     data:{
                        token : token,
@@ -120,13 +120,26 @@
             let token = this.$cookies.get('userToken')
             axios({
                 method: 'GET',
-                url: 'http://localhost/api/requestsAll/',
+                url: 'api/requestsAll/',
                 headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
             }).then((response) => {
                 this.requests = response.data
                 console.log(response)
             })
                 .catch((error) => (console.log(error)));
+            this.intervalid1 = setInterval(() => {
+                let token = this.$cookies.get('userToken')
+                axios({
+                    method: 'GET',
+                    url: 'api/requestsAll/',
+                    headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
+                }).then((response) => {
+                    this.requests = response.data
+                    console.log(response)
+                })
+                    .catch((error) => (console.log(error)));
+            }, 30000)
+
         }
     }
 </script>

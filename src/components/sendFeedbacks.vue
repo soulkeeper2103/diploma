@@ -1,7 +1,7 @@
 <template>
     <v-card
             flat
-            width="50%">
+            width="70%">
         <v-card-title>Оставить отзыв</v-card-title>
         <v-textarea v-model="text" label="Отзыв" placeholder="Напишите отзыв здесь"></v-textarea>
         <v-card-text>
@@ -11,6 +11,7 @@
             <v-btn text @click="rating=3"><v-icon v-if="rating>=3">{{'mdi-star'}}</v-icon><v-icon v-else>{{'mdi-star-outline'}}</v-icon></v-btn>
             <v-btn text @click="rating=4"><v-icon v-if="rating>=4">{{'mdi-star'}}</v-icon><v-icon v-else>{{'mdi-star-outline'}}</v-icon></v-btn>
             <v-btn text @click="rating=5"><v-icon v-if="rating>=5">{{'mdi-star'}}</v-icon><v-icon v-else>{{'mdi-star-outline'}}</v-icon></v-btn>
+
         </v-card-text>
         <v-card-actions><v-btn :elevation=0 @click="sendFeedback">Отправить</v-btn></v-card-actions>
         <v-snackbar
@@ -48,7 +49,7 @@
                 let token = this.$cookies.get('userToken')
                 axios({
                     method: 'POST',
-                    url: 'http://localhost/api/sendFeedback',
+                    url: 'api/sendFeedback',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                     data: {
                         token: token,
@@ -66,7 +67,7 @@
             let token = this.$cookies.get('userToken')
             axios({
                 method: 'POST',
-                url: 'http://localhost/api/getFeedbackByLogin',
+                url: 'api/getFeedbackByLogin',
                 headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                 data: {
                     token: token,

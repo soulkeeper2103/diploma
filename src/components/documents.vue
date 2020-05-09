@@ -1,7 +1,7 @@
 <template>
     <v-card
             flat
-            width="50%">
+            width="70%">
         <v-card-title>Ваши документы</v-card-title>
     <v-data-table
             v-model="selected"
@@ -43,7 +43,7 @@
                 let token = this.$cookies.get('userToken')
                 axios({
                     method: 'POST',
-                    url: 'http://localhost/api/orderDocuments',
+                    url: 'api/orderDocuments',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                     data:{
                         token:  token,
@@ -59,13 +59,26 @@
             let token = this.$cookies.get('userToken')
             axios({
                 method: 'GET',
-                url: 'http://localhost/api/documents',
+                url: 'api/documents',
                 headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
             }).then((response) => {
                 this.documents = response.data
                 console.log(response)
             })
                 .catch((error) => (console.log(error)));
+            setInterval(() => {
+                let token = this.$cookies.get('userToken')
+                axios({
+                    method: 'GET',
+                    url: 'api/documents',
+                    headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
+                }).then((response) => {
+                    this.documents = response.data
+                    console.log(response)
+                })
+                    .catch((error) => (console.log(error)));
+            }, 30000)
+
         },
         watch: {
                selected: function(){

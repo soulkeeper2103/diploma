@@ -1,6 +1,6 @@
 <template>
     <v-card  flat
-             width="50%">
+             width="70%">
         <v-card-title>Изменить статус заявки</v-card-title>
         <v-card-text>
     <v-combobox
@@ -41,7 +41,7 @@
                 let token = this.$cookies.get('userToken')
                 axios({
                     method: 'POST',
-                    url: 'http://localhost/api/changeRequestStatus/',
+                    url: 'api/changeRequestStatus/',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                     data:{
                         token : token,
@@ -55,18 +55,33 @@
             }
         },
         beforeMount() {
-        let token = this.$cookies.get('userToken')
-        axios({
-                  method: 'GET',
-                  url: 'http://localhost/api/requestsAll/',
-                  headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
-              }).then((response) => {
-                  let result = []
-                  for(let id in response.data[0]) {var v = response.data[0][id]; result.push(v.id);}
-            this.items = result
-            console.log(response)
-        })
-            .catch((error) => (console.log(error)));
+            let token = this.$cookies.get('userToken')
+            axios({
+                method: 'GET',
+                url: 'api/requestsAll/',
+                headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
+            }).then((response) => {
+                let result = []
+                for(let id in response.data[0]) {var v = response.data[0][id]; result.push(v.id);}
+                this.items = result
+                console.log(response)
+            })
+                .catch((error) => (console.log(error)));
+            setInterval(() => {
+                let token = this.$cookies.get('userToken')
+                axios({
+                    method: 'GET',
+                    url: 'api/requestsAll/',
+                    headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
+                }).then((response) => {
+                    let result = []
+                    for(let id in response.data[0]) {var v = response.data[0][id]; result.push(v.id);}
+                    this.items = result
+                    console.log(response)
+                })
+                    .catch((error) => (console.log(error)));
+            }, 30000)
+
     },
         watch: {
             select: function () {

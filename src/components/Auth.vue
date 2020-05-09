@@ -124,7 +124,7 @@
             {
                 axios({
                     method: 'POST',
-                    url: 'http://localhost/api/auth',
+                    url: 'api/auth',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                     data: {
                         login: this.login,
@@ -148,7 +148,7 @@
             {
                 axios({
                     method: 'POST',
-                    url: 'http://localhost/api/restorePassword',
+                    url: 'api/restorePassword',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                     data: {
                         email: this.email,

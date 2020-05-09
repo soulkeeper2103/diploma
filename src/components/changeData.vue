@@ -1,6 +1,6 @@
 <template>
     <v-card flat
-            width="50%">
+            width="70%">
         <v-card-title>Личные данные<v-spacer></v-spacer><v-btn :elevation=0 @click="isChange=!isChange"><v-icon>{{'mdi-account-edit'}}</v-icon>Редактировать данные</v-btn></v-card-title>
         <v-text-field
                 :rules="[rules.required, rules.lengthP]"
@@ -181,7 +181,7 @@
                 let token = this.$cookies.get('userToken')
                 axios({
                     method: 'POST',
-                    url: 'http://localhost/api/changePassword',
+                    url: 'api/changePassword',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                     data: {
                         token: token,
@@ -204,7 +204,7 @@
                 let token = this.$cookies.get('userToken')
                 axios({
                     method: 'POST',
-                    url: 'http://localhost/api/changeData',
+                    url: 'api/changeData',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                     data: {
                         token: token,
@@ -230,11 +230,11 @@
                     .catch((error) => (console.log(error)));
             }
         },
-        mounted() {
+        beforeMount() {
             let token = this.$cookies.get('userToken')
             axios({
                 method: 'GET',
-                url: 'http://localhost/api/user',
+                url: 'api/user',
                 headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
                 data: {
                 },
@@ -246,6 +246,23 @@
                 this.email=response.data[0].email
             })
                 .catch((error) => (console.log(error)));
+            setInterval(() => {
+                let token = this.$cookies.get('userToken')
+                axios({
+                    method: 'GET',
+                    url: 'api/user',
+                    headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
+                    data: {
+                    },
+                }).then((response) => {
+                    console.log(response)
+                    this.name=response.data[0].name
+                    this.login=response.data[0].login
+                    this.phone=response.data[0].phone
+                    this.email=response.data[0].email
+                })
+                    .catch((error) => (console.log(error)));
+            }, 30000)
         },
         watch: {
             name: function() {

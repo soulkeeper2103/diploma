@@ -44,26 +44,40 @@ class Application {
         let app = this.expressApp;
         let jsonParser = bodyParser.json();
         app.use(express.json())
-        app.get('/api/requests',  this.getRequestsByLogin.bind(this));
-        app.get('/api/requestsAll',  this.getRequests.bind(this));
-        app.get('/api/users',  this.getUsers.bind(this));
-        app.get('/api/sendMessages',  this.getSendMessages.bind(this));
-        app.get('/api/receivedMessages',  this.getReceivedMessages.bind(this));
-        app.get('/api/requestsStatus/:id',  this.getRequestStatusById.bind(this));
-        app.get('/api/documents',  this.getDocumentsByLogin.bind(this));
-        app.get('/api/user',  this.getDataByLogin.bind(this));
-        app.post('/api/registerNewUser', jsonParser, this.registerNewUser.bind(this));
-        app.post('/api/orderDocuments', jsonParser, this.orderDocuments.bind(this));
-        app.post('/api/sendRequest', jsonParser, this.sendRequest.bind(this));
-        app.post('/api/changeData', jsonParser, this.changeData.bind(this));
-        app.post('/api/changePassword', jsonParser, this.changePassword.bind(this));
-        app.post('/api/sendUnauthorizedRequest', jsonParser, this.sendUnauthorizedRequest.bind(this));
-        app.post('/api/sendMessage', jsonParser, this.sendMessage.bind(this));
-        app.post('/api/sendFeedback', jsonParser, this.sendFeedback.bind(this));
-        app.post('/api/auth', jsonParser, this.auth.bind(this));
-        app.post('/api/changeRequestStatus', jsonParser, this.changeRequestStatus.bind(this));
-        app.post('/api/getFeedbackByLogin', jsonParser, this.getFeedbackByLogin.bind(this));
-        app.post('/api/restorePassword', jsonParser, this.restorePassword.bind(this));
+        app.get('/lk/api/requests',  this.getRequestsByLogin.bind(this));
+        app.get('/lk/api/requestsAll',  this.getRequests.bind(this));
+        app.get('/lk/api/users',  this.getUsers.bind(this));
+        app.get('/lk/api/sendMessages',  this.getSendMessages.bind(this));
+        app.get('/lk/api/receivedMessages',  this.getReceivedMessages.bind(this));
+        app.get('/lk/api/requestsStatus/:id',  this.getRequestStatusById.bind(this));
+        app.get('/lk/api/documents',  this.getDocumentsByLogin.bind(this));
+        app.get('/lk/api/user',  this.getDataByLogin.bind(this));
+        app.get('/lk/api/feedbacks',  this.getFeedbacks.bind(this));
+        app.post('/lk/api/registerNewUser', jsonParser, this.registerNewUser.bind(this));
+        app.post('/lk/api/orderDocuments', jsonParser, this.orderDocuments.bind(this));
+        app.post('/lk/api/sendRequest', jsonParser, this.sendRequest.bind(this));
+        app.post('/lk/api/changeData', jsonParser, this.changeData.bind(this));
+        app.post('/lk/api/changePassword', jsonParser, this.changePassword.bind(this));
+        app.post('/lk/api/sendUnauthorizedRequest', jsonParser, this.sendUnauthorizedRequest.bind(this));
+        app.post('/lk/api/sendMessage', jsonParser, this.sendMessage.bind(this));
+        app.post('/lk/api/sendFeedback', jsonParser, this.sendFeedback.bind(this));
+        app.post('/lk/api/auth', jsonParser, this.auth.bind(this));
+        app.post('/lk/api/changeRequestStatus', jsonParser, this.changeRequestStatus.bind(this));
+        app.post('/lk/api/getFeedbackByLogin', jsonParser, this.getFeedbackByLogin.bind(this));
+        app.post('/lk/api/restorePassword', jsonParser, this.restorePassword.bind(this));
+    }
+
+    getFeedbacks(req, res) {
+        res = this.setHeaders(res);
+        sql.connect(config).then(pool => {
+            // Stored procedure
+            return pool.request()
+                .execute('getFeedbacks')
+        }).then(result => {
+            res.send(result.recordsets);
+        }).catch(err => {
+            console.dir(err)
+        });
     }
 
     getSendMessages(req, res) {
@@ -165,7 +179,6 @@ class Application {
         });
     }
     getRequestStatusById(req, res) {
-        if (this.checkToken(req.get('Token'))==1) {console.log("failed");return}
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
             // Stored procedure

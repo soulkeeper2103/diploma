@@ -1,7 +1,7 @@
 <template>
     <v-card
             flat
-            width="50%">
+            width="70%">
         <v-card-text>
             <v-card-title>Отправить заявку</v-card-title>
             Комментарий к заявке
@@ -61,7 +61,7 @@
                  let token = this.$cookies.get('userToken')
                  axios({
                      method: 'POST',
-                     url: 'http://localhost/api/sendRequest',
+                     url: 'api/sendRequest',
                      headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                      data: {
                          token: token,
