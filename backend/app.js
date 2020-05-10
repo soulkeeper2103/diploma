@@ -78,8 +78,7 @@ class Application {
         }).catch(err => {
             console.dir(err)
         });
-    }
-
+    } // все отзывы
     getSendMessages(req, res) {
         if (this.checkToken(req.get('Token'))==1) return
         res = this.setHeaders(res);
@@ -93,8 +92,7 @@ class Application {
         }).catch(err => {
             console.dir(err)
         });
-    }
-
+    }  // отправленные сообщения
     getDataByLogin(req, res) {
         if (this.checkToken(req.get('Token'))==1) return
         res = this.setHeaders(res);
@@ -108,8 +106,7 @@ class Application {
         }).catch(err => {
             console.dir(err)
         });
-    }
-
+    } // данные по логину
     getReceivedMessages(req, res) {
         if (this.checkToken(req.get('Token'))==1) return
         res = this.setHeaders(res);
@@ -123,10 +120,10 @@ class Application {
         }).catch(err => {
             console.dir(err)
         });
-    }
-
+    } // полученные сообщения
     getRequestsByLogin(req, res) {
         if (this.checkToken(req.get('Token'))==1) return
+        if (jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Клиент") {res.set(403); return}
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
             // Stored procedure
@@ -138,9 +135,10 @@ class Application {
         }).catch(err => {
             console.dir(err)
         });
-    }
+    } // отправленные запросы
     getRequests(req, res) {
         if (this.checkToken(req.get('Token'))==1) return
+        if (jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Администратор") {res.set(403); return}
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
             return pool.request()
@@ -150,7 +148,7 @@ class Application {
         }).catch(err => {
             console.dir(err)
         });
-    }
+    } // все запросы
     getUsers(req, res) {
         if (this.checkToken(req.get('Token'))==1) return
         res = this.setHeaders(res);
@@ -163,9 +161,10 @@ class Application {
         }).catch(err => {
             console.dir(err)
         });
-    }
+    } // все пользователи
     getDocumentsByLogin(req, res) {
         if (this.checkToken(req.get('Token'))==1) return
+        if (jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Клиент") {res.set(403); return}
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
             // Stored procedure
@@ -177,7 +176,7 @@ class Application {
         }).catch(err => {
             console.dir(err)
         });
-    }
+    } // документы пользователя
     getRequestStatusById(req, res) {
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
@@ -193,6 +192,7 @@ class Application {
     }
     registerNewUser(req, res) {
         if (this.checkToken(req.body.token)==1) return
+        if (jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Администратор") {res.set(403); return}
         let username = UsernameGenerator.generateUsername();
         let exist=0
         res = this.setHeaders(res);
@@ -245,6 +245,7 @@ class Application {
 
     }
     orderDocuments(req, res) {
+        if (jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Клиент") {res.set(403); return}
         let message = {
             from: "soulkeeper2103@yandex.ru",
             to: '',
@@ -298,6 +299,7 @@ class Application {
 
     }
     sendRequest(req, res) {
+        if (jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Клиент") {res.set(403); return}
         if (this.checkToken(req.body.token)==1) return
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
@@ -315,7 +317,6 @@ class Application {
         });
 
     }
-
     changePassword(req, res){
         if (this.checkToken(req.body.token)==1) return
         res = this.setHeaders(res);
@@ -335,7 +336,6 @@ class Application {
         });
 
     }
-
     changeData(req, res) {
         if (this.checkToken(req.body.token)==1) return
         res = this.setHeaders(res);
@@ -365,7 +365,6 @@ class Application {
         });
 
     }
-
     sendUnauthorizedRequest(req, res){
         let pass = this.generateStrongPassword();
         let username = UsernameGenerator.generateUsername();
@@ -433,8 +432,8 @@ class Application {
             console.dir(err)
         });
     }
-
     getFeedbackByLogin(req, res) {
+        if (jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Клиент") {res.set(403); return}
         if (this.checkToken(req.body.token)==1) return
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
@@ -449,7 +448,6 @@ class Application {
         });
 
     }
-
     restorePassword(req, res) {
         let pass = this.generateStrongPassword();
         res = this.setHeaders(res);
@@ -486,8 +484,8 @@ class Application {
         });
 
     }
-
     sendFeedback(req, res) {
+        if (jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Клиент") {res.set(403); return}
         if (this.checkToken(req.body.token)==1) return
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
@@ -505,10 +503,10 @@ class Application {
         });
 
     }
-
     changeRequestStatus(req, res){
         res = this.setHeaders(res);
         if (this.checkToken(req.body.token)==1) return
+        if (jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Администратор") {res.set(403); return}
         sql.connect(config).then(pool => {
             // Stored procedure
             return pool.request()
@@ -522,7 +520,6 @@ class Application {
             console.dir(err)
         });
     }
-
     auth(req, res) {
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {

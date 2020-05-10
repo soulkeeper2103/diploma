@@ -9,6 +9,7 @@
             >
                 <v-toolbar-title>Система Архива Кнопка</v-toolbar-title>
                 <v-spacer></v-spacer>
+                <v-btn light @click="open" >Вернуться на главную</v-btn>
                 <v-btn light @click="unlog" v-if="$root.showData">ВЫХОД</v-btn>
                 <template v-slot:img="{ props }">
                     <v-img
@@ -144,6 +145,10 @@
                 this.$root.type=''
                 this.$root.login=''
                 this.$root.showData=false
+            },
+            open()
+            {
+                window.open('/..')
             }
         },
         beforeMount()

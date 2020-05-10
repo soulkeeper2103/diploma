@@ -13,6 +13,19 @@
     >
     </v-data-table>
         <v-card-actions><v-btn @click="orderDocuments" :disabled="isButtonDisabled">Заказать документы на email</v-btn></v-card-actions>
+        <v-snackbar
+                v-model="snackbar"
+                :timeout="timeout"
+        >
+            {{ textSnack }}
+            <v-btn
+                    color="blue"
+                    text
+                    @click="snackbar = false"
+            >
+                Close
+            </v-btn>
+        </v-snackbar>
     </v-card>
 </template>
 
@@ -22,6 +35,9 @@
         name: "documents",
         data() {
             return {
+                snackbar: false,
+                textSnack: '',
+                timeout: 2000,
                 isButtonDisabled: true,
                 canSend: false,
                 selected: [],
@@ -40,6 +56,7 @@
         },
         methods:{
             orderDocuments(){
+                this.isButtonDisabled=true
                 let token = this.$cookies.get('userToken')
                 axios({
                     method: 'POST',
@@ -49,8 +66,12 @@
                         token:  token,
                         docs: this.selected,
                     }
-                }).then((response) => {
-                    console.log(response)
+                }).then(() => {
+                    this.textSnack='Документы высланы на почту';
+                    this.snackbar=true
+                    this.dialog=false;
+                    this.selected=[]
+
                 })
                     .catch((error) => (console.log(error)));
             }

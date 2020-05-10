@@ -1,7 +1,7 @@
 <template>
     <v-card flat
             width="70%">
-        <v-card-title>Личные данные<v-spacer></v-spacer><v-btn :elevation=0 @click="isChange=!isChange"><v-icon>{{'mdi-account-edit'}}</v-icon>Редактировать данные</v-btn></v-card-title>
+        <v-card-title>Личные данные<v-spacer></v-spacer></v-card-title>
         <v-text-field
                 :rules="[rules.required, rules.lengthP]"
                 v-model="login"
@@ -9,8 +9,6 @@
                 outlined
                 maxlength="24"
                 placeholder="Логин"
-                :filled="!isChange"
-                :readonly="!isChange"
         ></v-text-field>
         <v-text-field
                 :rules="[rules.required]"
@@ -19,8 +17,6 @@
                 maxlength="90"
                 placeholder="Имя"
                 outlined
-                :filled="!isChange"
-                :readonly="!isChange"
         ></v-text-field>
         <v-text-field
                 :rules="[rules.required, rules.phone]"
@@ -29,8 +25,6 @@
                 outlined
                 placeholder="+7##########"
                 maxlength="12"
-                :filled="!isChange"
-                :readonly="!isChange"
         ></v-text-field>
         <v-text-field
                 :rules="[rules.required, rules.email]"
@@ -39,8 +33,6 @@
                 maxlength="30"
                 placeholder="Электронная почта"
                 outlined
-                :filled="!isChange"
-                :readonly="!isChange"
         ></v-text-field>
         <v-text-field
                 :rules="[rules.required, rules.lengthP]"
@@ -50,14 +42,10 @@
                 :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
                 :type="show ? 'text' : 'password'"
                 @click:append="show = !show"
-                :filled="!isChange"
-                :readonly="!isChange"
-                v-if="isChange"
         ></v-text-field>
         <v-card-actions>
             <v-btn :disabled="isButtonDisabled ||  isButtonDisabled1 ||  isButtonDisabled2 ||  isButtonDisabled3 ||  isButtonDisabled4"
                    :elevation=0
-                   v-if="isChange"
                    @click="changeData">Сохранить изменения</v-btn>
         <v-spacer></v-spacer>
         <v-dialog
@@ -142,7 +130,7 @@
                 isChange: false,
                 login: '',
                 name: '',
-                phone: '',
+                phone: '+7',
                 email: '',
                 password: '',
                 oldPassword: '',

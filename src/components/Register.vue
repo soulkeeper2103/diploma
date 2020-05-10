@@ -86,7 +86,7 @@ export default {
                 }
             },
             name: '',
-            phone: '',
+            phone: '+7',
             email: '',
             type: 'Клиент',
             snackbar: false,

@@ -27,7 +27,7 @@
                         value: 'id',
                     },
                     {
-                        text: 'Название',
+                        text: 'Комментарий',
                         value: 'text',
                     },
                     {text: 'Тип', value: 'type'},
