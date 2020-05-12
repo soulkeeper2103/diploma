@@ -1,0 +1,911 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"version": "1.0.0",
+		"title": "API системы Архива 'Кнопка'"
+	},
+	"host": "",
+	"basePath": "/lk/api",
+	"tags": [
+		{
+			"name": "Клиент",
+			"description": "API, доступное клиентам"
+		},
+		{
+			"name": "Администратор",
+			"description": "API, доступное администраторам"
+		},
+		{
+			"name": "Все",
+			"description": "API, доступное всем"
+		}
+	],
+	"schemes": [
+		"http"
+	],
+	"consumes": [
+		"application/json"
+	],
+	"produces": [
+		"application/json"
+	],
+	"paths": {
+      "/feedbacks": {
+        "get": {
+          "tags": [
+            "Все"
+          ],
+          "description": "Возвращает отзывы",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "success",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "login": {
+                    "type": "string",
+                    "format": "string"
+                  },
+                  "feedbackText": {
+                    "type": "string",
+                    "format": "string"
+                  },
+                  "rating": {
+                    "type": "integer",
+                    "format": "integer"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/sendMessages": {
+        "get": {
+          "tags": [
+            "Клиент",
+            "Администратор"
+          ],
+          "parameters": [
+            {
+              "name": "token",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "format": "string"
+            }
+          ],
+          "description": "Возвращает отправленные сообщения",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "success",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "login": {
+                    "type": "string",
+                    "format": "string"
+                  },
+                  "messageText": {
+                    "type": "string",
+                    "format": "string"
+                  },
+                  "dateTime": {
+                    "type": "string",
+                    "format": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/receivedMessages": {
+        "get": {
+          "tags": [
+            "Клиент",
+            "Администратор"
+          ],
+          "parameters": [
+            {
+              "name": "token",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "format": "string"
+            }
+          ],
+          "description": "Возвращает полученные сообщения",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "success",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "login": {
+                    "type": "string",
+                    "format": "string"
+                  },
+                  "messageText": {
+                    "type": "string",
+                    "format": "string"
+                  },
+                  "dateTime": {
+                    "type": "string",
+                    "format": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/user": {
+        "get": {
+          "tags": [
+            "Клиент",
+            "Администратор"
+          ],
+          "parameters": [
+            {
+              "name": "token",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "format": "string"
+            }
+          ],
+          "description": "Возращает данные пользователя",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "success",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "login": {
+                    "type": "string",
+                    "format": "string"
+                  },
+                  "name": {
+                    "type": "string",
+                    "format": "string"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "format": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/requests": {
+        "get": {
+          "tags": [
+            "Клиент"
+          ],
+          "parameters": [
+            {
+              "name": "token",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "format": "string"
+            }
+          ],
+          "description": "Возращает отправленные заявки",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "success",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "integer"
+                  },
+                  "text": {
+                    "type": "string",
+                    "format": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "format": "string"
+                  },
+                  "status": {
+                    "type": "string",
+                    "format": "string"
+                  },
+                  "timeStamp": {
+                    "type": "string",
+                    "format": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/users": {
+        "get": {
+          "tags": [
+            "Клиент",
+            "Администратор"
+          ],
+          "parameters": [
+            {
+              "name": "token",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "format": "string"
+            }
+          ],
+          "description": "Возращает пользователей противоложного типа",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "success",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "login": {
+                    "type": "string",
+                    "format": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/documents": {
+        "get": {
+          "tags": [
+            "Клиент"
+          ],
+          "parameters": [
+            {
+              "name": "token",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "format": "string"
+            }
+          ],
+          "description": "Возращает данные о хранимых документах",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "success",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "integer"
+                  },
+                  "name": {
+                    "type": "string",
+                    "format": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/requestsStatus/{id}": {
+        "get": {
+          "tags": [
+            "Все"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "format": "string"
+            }
+          ],
+          "description": "Возращает данные о статусе заявки",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "success",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "integer"
+                  },
+                  "status": {
+                    "type": "string",
+                    "format": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/registerNewUser": {
+        "post": {
+          "tags": [
+            "Администратор"
+          ],
+          "parameters": [
+            {
+              "name": "token",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "format": "string"
+            },
+            {
+              "in": "body",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "Клиент",
+                      "Администратор"
+                    ]
+                  }
+                }
+              },
+              "name": "Данные пользователя"
+            }
+          ],
+          "description": "Регистрирует нового пользователя",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "success"
+            }
+          }
+        }
+      },
+      "/orderDocuments": {
+        "post": {
+          "tags": [
+            "Клиент"
+          ],
+          "parameters": [
+            {
+              "name": "token",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "format": "string"
+            },
+            {
+              "in": "body",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "docs": {
+                    "type": "integer",
+                    "format": "array"
+                  }
+                }
+              },
+              "name": "Список документов"
+            }
+          ],
+          "description": "Отправляет письмо с документами на почту",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "success"
+            }
+          }
+        }
+      },
+      "/sendRequest": {
+        "post": {
+          "tags": [
+            "Клиент"
+          ],
+          "parameters": [
+            {
+              "name": "token",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "format": "string"
+            },
+            {
+              "in": "body",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "Архивная обработка",
+                      "Дезинфекция",
+                      "Переплет",
+                      "Электронный архив",
+                      "Хранение",
+                      "Уничтожение",
+                      "Сканирование"
+                    ]
+                  }
+                }
+              },
+              "name": "Данные заявки"
+            }
+          ],
+          "description": "Отправляет новую заявку от существующего пользователя",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "success"
+            }
+          }
+        }
+      },
+      "/changePassword": {
+        "post": {
+          "tags": [
+            "Клиент",
+            "Администратор"
+          ],
+          "parameters": [
+            {
+              "name": "token",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "format": "string"
+            },
+            {
+              "in": "body",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "oldPassword": {
+                    "type": "string"
+                  },
+                  "newPassword": {
+                    "type": "string"
+                  }
+                }
+              },
+              "name": "Данные для смены пародя"
+            }
+          ],
+          "description": "Меняет пароль пользователя",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "success"
+            }
+          }
+        }
+      },
+      "/changedata": {
+        "post": {
+          "tags": [
+            "Клиент",
+            "Администратор"
+          ],
+          "parameters": [
+            {
+              "name": "token",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "format": "string"
+            },
+            {
+              "in": "body",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "login": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              },
+              "name": "Новые данные пользователя"
+            }
+          ],
+          "description": "Изменяет данные пользователя",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "success"
+            }
+          }
+        }
+      },
+      "/sendUnauthorizedRequest": {
+        "post": {
+          "tags": [
+            "Все"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "text": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "Архивная обработка",
+                      "Дезинфекция",
+                      "Переплет",
+                      "Электронный архив",
+                      "Хранение",
+                      "Уничтожение",
+                      "Сканирование"
+                    ]
+                  }
+                }
+              },
+              "name": "Данные отправителя и заявки"
+            }
+          ],
+          "description": "Отправляет новую заявку и регистрирует клиента, если его в сиситеме нет",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "success"
+            }
+          }
+        }
+      },
+      "/sendMessage": {
+        "post": {
+          "tags": [
+            "Клиент",
+            "Администратор"
+          ],
+          "parameters": [
+            {
+              "name": "token",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "format": "string"
+            },
+            {
+              "in": "body",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "loginDST": {
+                    "type": "string"
+                  },
+                  "text": {
+                    "type": "string"
+                  }
+                }
+              },
+              "name": "Сообщение"
+            }
+          ],
+          "description": "Отправляет сообщение",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "success"
+            }
+          }
+        }
+      },
+      "/getFeedbackByLogin": {
+        "get": {
+          "tags": [
+            "Клиент"
+          ],
+          "parameters": [
+            {
+              "name": "token",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "format": "string"
+            }
+          ],
+          "description": "Возращает оставленный отзыв",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "success",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "login": {
+                    "type": "string",
+                    "format": "string"
+                  },
+                  "feedbackText": {
+                    "type": "string",
+                    "format": "string"
+                  },
+                  "rating": {
+                    "type": "integer",
+                    "format": "integer"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/restorePassword": {
+        "post": {
+          "tags": [
+            "Все"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  }
+                }
+              },
+              "name": "Email пользователя"
+            }
+          ],
+          "description": "Генерирует новый пароль пользователю",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "success"
+            }
+          }
+        }
+      },
+      "/sendFeedback": {
+        "post": {
+          "tags": [
+            "Клиент"
+          ],
+          "parameters": [
+            {
+              "name": "token",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "format": "string"
+            },
+            {
+              "in": "body",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "rating": {
+                    "type": "integer",
+                    "enum": [
+                      1,
+                      2,
+                      3,
+                      4,
+                      5
+                    ]
+                  }
+                }
+              },
+              "name": "Данные отзыва"
+            }
+          ],
+          "description": "Отправляет отзыв",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "success"
+            }
+          }
+        }
+      },
+      "/changeRequestStatus": {
+        "post": {
+          "tags": [
+            "Администратор"
+          ],
+          "parameters": [
+            {
+              "name": "token",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "format": "string"
+            },
+            {
+              "in": "body",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "На рассмотрении",
+                      "Выполняется",
+                      "Завершена"
+                    ]
+                  }
+                }
+              },
+              "name": "Номер заявки и ее статус"
+            }
+          ],
+          "description": "Меняет статус заявки",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "success"
+            }
+          }
+        }
+      },
+      "/auth": {
+        "post": {
+          "tags": [
+            "Все"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "required": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "login": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              },
+              "name": "Логин и пароль"
+            }
+          ],
+          "description": "Авторизация",
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "success",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string"
+                  },
+                  "login": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+}

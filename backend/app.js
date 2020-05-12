@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 const generatePassword = require('password-generator');
 const nodemailer = require('nodemailer');
 const UsernameGenerator = require('username-generator');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 const config = {
     user: "archiveClient",
     password: "password",
@@ -38,6 +40,7 @@ class Application {
         this.expressApp = express();
         this.attachRoutes();
         this.expressApp.use(cors())
+        this.expressApp.use('/lk/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     }
 
     attachRoutes () {
@@ -539,6 +542,7 @@ class Application {
             console.dir(err)
         });
     }
+
     setHeaders(res) {
         res.set({'X-Content-Type-Options':'nosniff',
             'Access-Control-Allow-Origin':'*'})
