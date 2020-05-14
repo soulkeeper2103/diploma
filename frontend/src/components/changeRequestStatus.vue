@@ -16,6 +16,19 @@
         </v-card-text>
         <v-btn :disabled="isButtonDisabled ||  isButtonDisabled1"
                 @click="changeRequestStatus">Изменить</v-btn>
+        <v-snackbar
+                v-model="snackbar"
+                :timeout="timeout"
+        >
+            {{ textSnack }}
+            <v-btn
+                    color="blue"
+                    text
+                    @click="snackbar = false"
+            >
+                Close
+            </v-btn>
+        </v-snackbar>
     </v-card>
 </template>
 
@@ -33,6 +46,9 @@
                 items: [],
                 status: [],
                 statuses: ['На рассмотрении', 'Выполняется', 'Завершена'],
+                snackbar: false,
+                textSnack: '',
+                timeout: 2000
             }
         },
         methods:{
@@ -48,8 +64,9 @@
                         id: this.select,
                         status: this.status
                     }
-                }).then((response) => {
-                    console.log(response)
+                }).then(() => {
+                    this.textSnack='Статус заявки изменен'
+                    this.snackbar=true;
                 })
                     .catch((error) => (console.log(error)));
             }

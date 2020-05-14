@@ -3,7 +3,7 @@
             width="70%">
         <v-card-title>Личные данные<v-spacer></v-spacer></v-card-title>
         <v-text-field
-                :rules="[rules.required, rules.lengthP]"
+                :rules="[rules.required, rules.lengthP, rules.loginlat]"
                 v-model="login"
                 label="Логин"
                 outlined
@@ -152,7 +152,7 @@
                 rules: {
                     required: value => !!value || 'Обязательно для заполнения',
                     email: value => {
-                        const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                        const pattern = /^(([^<>()[\]\\.,;:\s@А-я"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
                         return pattern.test(value) || 'Неверный e-mail'
 
                     },
@@ -160,7 +160,11 @@
                         const pattern=/^([+])([7])([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])([0-9])?$/
                         return pattern.test(value) || 'Неверный номер телефона'
                     },
-                    lengthP: value => value.length>=12 || 'Минимум 12 символов'
+                    lengthP: value => value.length>=12 || 'Минимум 12 символов',
+                    loginlat: value => {
+                        const pattern = /[A-z0-9_]/
+                        return pattern.test(value) || 'В логине присутствуют запрещенные символы'
+                    }
                 },
             }
         },
@@ -203,7 +207,7 @@
                         password: this.oldPassword
                     },
                 }).then((response) => {
-                    if(response.data[1]){
+                    if(response.data[0].res==0){
                         this.$cookies.set("userToken", response.data[1], "30D")
                         this.textSnack='Изменения успешно сохранены'
                         this.snackbar=true}
@@ -234,23 +238,6 @@
                 this.email=response.data[0].email
             })
                 .catch((error) => (console.log(error)));
-            setInterval(() => {
-                let token = this.$cookies.get('userToken')
-                axios({
-                    method: 'GET',
-                    url: 'api/user',
-                    headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
-                    data: {
-                    },
-                }).then((response) => {
-                    console.log(response)
-                    this.name=response.data[0].name
-                    this.login=response.data[0].login
-                    this.phone=response.data[0].phone
-                    this.email=response.data[0].email
-                })
-                    .catch((error) => (console.log(error)));
-            }, 30000)
         },
         watch: {
             name: function() {
@@ -258,7 +245,7 @@
                 this.isButtonDisabled = !this.canSend;
             },
             email: function () {
-                const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                const pattern = /^(([^<>()[\]\\.,;:\s@А-я"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
                 this.canSend1 = pattern.test(this.email)
                 this.isButtonDisabled1 = !this.canSend1;
             },
@@ -268,11 +255,12 @@
                 this.isButtonDisabled2 = !this.canSend2;
             },
             oldPassword: function() {
-                this.canSend3 = this.oldPassword.length >= 2;
+                this.canSend3 = this.oldPassword.length >= 12;
                 this.isButtonDisabled3 = !this.canSend3;
             },
             login: function() {
-                this.canSend4 = this.login.length >= 2;
+                const pattern = /[A-z0-9_]/
+                this.canSend4 = pattern.test(this.login)
                 this.isButtonDisabled4 = !this.canSend4;
             },
             oldPasswordForNew: function() {

@@ -3,6 +3,12 @@
             flat
             width="70%">
         <v-card-title>Ваши документы</v-card-title>
+        <v-text-field
+                v-model="search"
+                label="Поиск"
+                single-line
+                hide-details
+        ></v-text-field>
     <v-data-table
             v-model="selected"
             show-select
@@ -10,6 +16,7 @@
             :items="doc"
             v-for="doc in documents"
             :headers="headers"
+            :search="search"
     >
     </v-data-table>
         <v-card-actions><v-btn @click="orderDocuments" :disabled="isButtonDisabled">Заказать документы на email</v-btn></v-card-actions>
@@ -35,6 +42,7 @@
         name: "documents",
         data() {
             return {
+                search: '',
                 snackbar: false,
                 textSnack: '',
                 timeout: 2000,
@@ -94,11 +102,17 @@
                     url: 'api/documents',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
                 }).then((response) => {
-                    this.documents = response.data
+                    let a, b
+                    for(let i in this.documents[0]) a=i
+                    for(let i in response.data[0]) b=i
+                    if(a==b) return;
+                    else{
+                        for(let i = b; i>a; i--) this.documents[0].unshift(response.data[0][i])
+                    }
                     console.log(response)
                 })
                     .catch((error) => (console.log(error)));
-            }, 30000)
+            }, 1000)
 
         },
         watch: {

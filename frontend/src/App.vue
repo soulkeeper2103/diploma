@@ -167,7 +167,10 @@
                     this.$root.login = response.data[0].login;
                     this.$root.showData = true;
                 })
-                    .catch((error) => (console.log(error)));
+                    .catch(() => { this.$cookies.remove('userToken')
+                        this.$root.type=''
+                        this.$root.login=''
+                        this.$root.showData=false });
             }
 
         },

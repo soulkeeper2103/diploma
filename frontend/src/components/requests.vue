@@ -54,11 +54,17 @@
                     url: 'api/requests/',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token': token},
                 }).then((response) => {
-                    this.requests = response.data
+                    let a, b
+                    for(let i in this.requests[0]) a=i
+                    for(let i in response.data[0]) b=i
+                    if(a==b) return;
+                    else{
+                        for(let i = 0; i<b-a; i++) this.requests[0].unshift(response.data[0][i])
+                    }
                     console.log(response)
                 })
                     .catch((error) => (console.log(error)));
-            }, 30000)
+            }, 1000)
 
 
         },

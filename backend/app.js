@@ -77,13 +77,15 @@ class Application {
             return pool.request()
                 .execute('getFeedbacks')
         }).then(result => {
+            for(let i in result.recordsets[0])
+                result.recordsets[0][i].date=result.recordsets[0][i].date.toLocaleDateString();
             res.send(result.recordsets);
         }).catch(err => {
             console.dir(err)
         });
     } // все отзывы
     getSendMessages(req, res) {
-        if (this.checkToken(req.get('Token'))==1) return
+        if (this.checkToken(req.get('Token'))==1) {res.status(401).json({}).end;return}
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
             // Stored procedure
@@ -91,13 +93,15 @@ class Application {
                 .input('login', sql.VarChar(24), jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].login)
                 .execute('getSendMessages')
         }).then(result => {
+            for(let i in result.recordsets[0])
+                result.recordsets[0][i].timeStamp=result.recordsets[0][i].timeStamp.toLocaleString();
             res.send(result.recordsets);
         }).catch(err => {
             console.dir(err)
         });
     }  // отправленные сообщения
     getDataByLogin(req, res) {
-        if (this.checkToken(req.get('Token'))==1) return
+        if (this.checkToken(req.get('Token'))==1) {res.status(401).json({}).end;return}
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
             // Stored procedure
@@ -105,13 +109,14 @@ class Application {
                 .input('login', sql.VarChar(24), jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].login)
                 .execute('getDataByLogin')
         }).then(result => {
+            res.status(200)
             res.send(result.recordset);
         }).catch(err => {
             console.dir(err)
         });
     } // данные по логину
     getReceivedMessages(req, res) {
-        if (this.checkToken(req.get('Token'))==1) return
+        if (this.checkToken(req.get('Token'))==1) {res.status(401).json({}).end;return}
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
             // Stored procedure
@@ -119,14 +124,16 @@ class Application {
                 .input('login', sql.VarChar(24), jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].login)
                 .execute('getReceivedMessages')
         }).then(result => {
+            for(let i in result.recordsets[0])
+                result.recordsets[0][i].timeStamp=result.recordsets[0][i].timeStamp.toLocaleString();
             res.send(result.recordsets);
         }).catch(err => {
             console.dir(err)
         });
     } // полученные сообщения
     getRequestsByLogin(req, res) {
-        if (this.checkToken(req.get('Token'))==1) return
-        if (jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Клиент") {res.set(403); return}
+        if (this.checkToken(req.get('Token'))==1) {res.status(401).json({}).end;return}
+        if (jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Клиент") {res.set(403).json({}).end; return}
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
             // Stored procedure
@@ -134,26 +141,30 @@ class Application {
                 .input('login', sql.VarChar(24), jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].login)
                 .execute('getRequestsByLogin')
         }).then(result => {
+            for(let i in result.recordsets[0])
+                result.recordsets[0][i].timeStamp=result.recordsets[0][i].timeStamp.toLocaleString();
             res.send(result.recordsets);
         }).catch(err => {
             console.dir(err)
         });
     } // отправленные запросы
     getRequests(req, res) {
-        if (this.checkToken(req.get('Token'))==1) return
-        if (jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Администратор") {res.set(403); return}
+        if (this.checkToken(req.get('Token'))==1) {res.status(401).json({}).end;return}
+        if (jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Администратор") {res.set(403).json({}).end; return}
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
             return pool.request()
                 .execute('getRequests')
         }).then(result => {
+            for(let i in result.recordsets[0])
+                result.recordsets[0][i].timeStamp=result.recordsets[0][i].timeStamp.toLocaleString();
             res.send(result.recordsets);
         }).catch(err => {
             console.dir(err)
         });
     } // все запросы
     getUsers(req, res) {
-        if (this.checkToken(req.get('Token'))==1) return
+        if (this.checkToken(req.get('Token'))==1) {res.status(401).json({}).end;return}
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
             return pool.request()
@@ -166,8 +177,8 @@ class Application {
         });
     } // все пользователи
     getDocumentsByLogin(req, res) {
-        if (this.checkToken(req.get('Token'))==1) return
-        if (jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Клиент") {res.set(403); return}
+        if (this.checkToken(req.get('Token'))==1) {res.status(401).json({}).end;return}
+        if (jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Клиент") {res.set(403).json({}).end; return}
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
             // Stored procedure
@@ -194,8 +205,8 @@ class Application {
         });
     }
     registerNewUser(req, res) {
-        if (this.checkToken(req.body.token)==1) return
-        if (jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Администратор") {res.set(403); return}
+        if (this.checkToken(req.body.token)==1) {res.status(401).json({}).end;return}
+        if (jwt.verify(req.body.token, '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Администратор") {res.set(403).json({}).end; return}
         let username = UsernameGenerator.generateUsername();
         let exist=0
         res = this.setHeaders(res);
@@ -240,7 +251,7 @@ class Application {
                         return process.exit(1);
                     }
                 })
-                res.status(200).json({})
+                res.status(200).json([{"res": 0}])
             }).catch(err => {
                 console.dir(err)
             });
@@ -248,7 +259,7 @@ class Application {
 
     }
     orderDocuments(req, res) {
-        if (jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Клиент") {res.set(403); return}
+        if (jwt.verify(req.body.token, '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Клиент") {res.set(403).json({}).end; return}
         let message = {
             from: "soulkeeper2103@yandex.ru",
             to: '',
@@ -302,8 +313,8 @@ class Application {
 
     }
     sendRequest(req, res) {
-        if (jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Клиент") {res.set(403); return}
-        if (this.checkToken(req.body.token)==1) return
+        if (jwt.verify(req.body.token, '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Клиент") {res.set(403).json({}).end; return}
+        if (this.checkToken(req.body.token)==1)  {res.status(401).json({}).end;return}
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
             // Stored procedure
@@ -313,15 +324,27 @@ class Application {
                 .input('type', sql.VarChar(30), req.body.type)
                 .execute('sendRequest')
         }).then(result => {
+            let message = {
+                from: "soulkeeper2103@yandex.ru",
+                to: result.recordset[0].email,
+                subject: "Заявка отправлена",
+                text: result.recordset[0].name + ",Заявка успешно отправлена. Поздравляем! Номер заявки: " + result.recordset[0].id
+            };
+            transporter.sendMail(message, (error, info) => {
+                if (error) {
+                    console.log('Error occurred');
+                    console.log(error.message);
+                    return process.exit(1);
+                }
+            })
             console.dir("success")
             res.status(200).json({})
         }).catch(err => {
             console.dir(err)
         });
-
     }
     changePassword(req, res){
-        if (this.checkToken(req.body.token)==1) return
+        if (this.checkToken(req.body.token)==1)  {res.status(401).json({}).end;return}
         res = this.setHeaders(res);
 
         sql.connect(config).then(pool => {
@@ -340,7 +363,7 @@ class Application {
 
     }
     changeData(req, res) {
-        if (this.checkToken(req.body.token)==1) return
+        if (this.checkToken(req.body.token)==1)  {res.status(401).json({}).end;return}
         res = this.setHeaders(res);
 
         sql.connect(config).then(pool => {
@@ -419,7 +442,7 @@ class Application {
 
     }
     sendMessage(req, res) {
-        if (this.checkToken(req.body.token)==1) return
+        if (this.checkToken(req.body.token)==1)  {res.status(401).json({}).end;return}
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
             // Stored procedure
@@ -436,8 +459,8 @@ class Application {
         });
     }
     getFeedbackByLogin(req, res) {
-        if (jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Клиент") {res.set(403); return}
-        if (this.checkToken(req.body.token)==1) return
+        if (jwt.verify(req.body.token, '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Клиент")  {res.set(403).json({}).end; return}
+        if (this.checkToken(req.body.token)==1)  {res.status(401).json({}).end;return}
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
             // Stored procedure
@@ -488,8 +511,8 @@ class Application {
 
     }
     sendFeedback(req, res) {
-        if (jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Клиент") {res.set(403); return}
-        if (this.checkToken(req.body.token)==1) return
+        if (jwt.verify(req.body.token, '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Клиент")  {res.set(403).json({}).end; return}
+        if (this.checkToken(req.body.token)==1) {res.status(401).json({}).end;return}
         res = this.setHeaders(res);
         sql.connect(config).then(pool => {
             // Stored procedure
@@ -508,8 +531,8 @@ class Application {
     }
     changeRequestStatus(req, res){
         res = this.setHeaders(res);
-        if (this.checkToken(req.body.token)==1) return
-        if (jwt.verify(req.get('Token'), '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Администратор") {res.set(403); return}
+        if (this.checkToken(req.body.token)==1) {res.status(401).json({}).end;return}
+        if (jwt.verify(req.body.token, '+MbQeThVmYq3t6w9z$C&F)J@NcRfUjXnZr4u7x!A%D*G-KaPdSgVkYp3s5v8y/B?').payload[0].type!="Администратор") {res.set(403).json({}).end; return}
         sql.connect(config).then(pool => {
             // Stored procedure
             return pool.request()

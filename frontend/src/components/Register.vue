@@ -110,6 +110,11 @@ export default {
                     type: this.type
                 },
             }).then((response) => {
+                if(response.data[0].res==0)
+                {
+                    this.textSnack='Пользователь зарегистрирован'
+                    this.snackbar=true;
+                }
                 if(response.data[0].res==1)
                 {
                     this.textSnack='Данный email уже зарегистрирован в системе'

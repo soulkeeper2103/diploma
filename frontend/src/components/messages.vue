@@ -130,24 +130,6 @@
               this.select = [];
               this.textSnack='Сообщение отправлено'
               this.snackbar=true;
-              axios({
-                  method: 'GET',
-                  url: 'api/SendMessages',
-                  headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token': token},
-              }).then((response) => {
-                  this.messages = response.data
-                  console.log(response)
-              })
-                  .catch((error) => (console.log(error)));
-              axios({
-                  method: 'GET',
-                  url: 'api/ReceivedMessages',
-                  headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token': token},
-              }).then((response) => {
-                  this.messagesR = response.data
-                  console.log(response)
-              })
-                  .catch((error) => (console.log(error)));
           }
         },
         beforeMount() {
@@ -188,8 +170,13 @@
                     url: 'api/SendMessages',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token': token},
                 }).then((response) => {
-                    this.messages = response.data
-                    console.log(response)
+                    let a, b
+                    for(let i in this.messages[0]) a=i
+                    for(let i in response.data[0]) b=i
+                    if(a==b) return;
+                    else{
+                        for(let i = 0; i<b-a; i++) this.messages[0].unshift(response.data[0][i])
+                    }
                 })
                     .catch((error) => (console.log(error)));
                 axios({
@@ -197,7 +184,13 @@
                     url: 'api/ReceivedMessages',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token': token},
                 }).then((response) => {
-                    this.messagesR = response.data
+                    let a, b
+                    for(let i in this.messagesR[0]) a=i
+                    for(let i in response.data[0]) b=i
+                    if(a==b) return;
+                    else{
+                        for(let i = 0; i<b-a; i++) this.messagesR[0].unshift(response.data[0][i])
+                    }
                     console.log(response)
                 })
                     .catch((error) => (console.log(error)));
@@ -212,7 +205,7 @@
                     console.log(response)
                 })
                     .catch((error) => (console.log(error)));
-            }, 30000)
+            }, 1000)
         },
         watch: {
             messageText: function() {
