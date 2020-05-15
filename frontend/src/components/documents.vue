@@ -102,7 +102,7 @@
                     url: 'api/documents',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
                 }).then((response) => {
-                    let a, b
+                    let a=0, b=0
                     for(let i in this.documents[0]) a=i
                     for(let i in response.data[0]) b=i
                     if(a==b) return;

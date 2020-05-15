@@ -3,16 +3,16 @@
              width="70%">
         <v-card-title>Изменить статус заявки</v-card-title>
         <v-card-text>
-    <v-combobox
+    <v-select
             v-model="select"
             :items="items"
             label="Номер заявки"
-    ></v-combobox>
-            <v-combobox
+    ></v-select>
+            <v-select
                     v-model="status"
                     :items="statuses"
                     label="Статус заявки">
-            </v-combobox>
+            </v-select>
         </v-card-text>
         <v-btn :disabled="isButtonDisabled ||  isButtonDisabled1"
                 @click="changeRequestStatus">Изменить</v-btn>
