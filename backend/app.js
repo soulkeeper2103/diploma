@@ -9,11 +9,11 @@ const UsernameGenerator = require('username-generator');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 const config = {
-    user: "archiveClient",
+    user: "archiveKnopka",
     password: "password",
-    server: 'localhost\\DEVELOPER',
+    server: 'localhost\\SQLEXPRESS',
     database: 'archiveKnopka',
-    port: 50484,
+    port: 52420,
     pool: {
         max: 10,
         min: 0,
@@ -29,7 +29,7 @@ const transporter = nodemailer.createTransport({
     secure: true, // upgrade later with STARTTLS
     auth: {
         user: "soulkeeper2103",
-        pass: "Qwerty99"
+        pass: "Soulkeeper2103@"
     }
 });
 
@@ -48,6 +48,8 @@ class Application {
         let jsonParser = bodyParser.json();
         app.use(express.json())
         app.get('/lk/api/requests',  this.getRequestsByLogin.bind(this));
+	app.get('/lk/api/license',  this.license.bind(this));
+	app.get('/lk/api/agreement',  this.agreement.bind(this));
         app.get('/lk/api/requestsAll',  this.getRequests.bind(this));
         app.get('/lk/api/users',  this.getUsers.bind(this));
         app.get('/lk/api/sendMessages',  this.getSendMessages.bind(this));
@@ -68,6 +70,34 @@ class Application {
         app.post('/lk/api/changeRequestStatus', jsonParser, this.changeRequestStatus.bind(this));
         app.post('/lk/api/getFeedbackByLogin', jsonParser, this.getFeedbackByLogin.bind(this));
         app.post('/lk/api/restorePassword', jsonParser, this.restorePassword.bind(this));
+    }
+
+    license(req, res){
+ var options = {
+    root: './',
+    dotfiles: 'deny',
+    headers: {
+      'x-timestamp': Date.now(),
+      'x-sent': true
+    }
+  }
+	res = this.setHeaders(res);
+	res.sendFile('./Attachments/license.pdf',  options)
+	res.status(200);
+    }
+
+agreement(req, res){
+ var options = {
+    root: './',
+    dotfiles: 'deny',
+    headers: {
+      'x-timestamp': Date.now(),
+      'x-sent': true
+    }
+  }
+	res = this.setHeaders(res);
+	res.sendFile('./Attachments/agreement.pdf',  options)
+	res.status(200);
     }
 
     getFeedbacks(req, res) {
@@ -580,12 +610,12 @@ class Application {
         }
     }
     generateStrongPassword() {
-        const maxLength = 90;
-        const minLength = 60;
-        const uppercaseMinCount = 6;
-        const lowercaseMinCount = 6;
-        const numberMinCount = 4;
-        const specialMinCount = 4;
+        const maxLength = 16;
+        const minLength = 12;
+        const uppercaseMinCount = 5;
+        const lowercaseMinCount = 5;
+        const numberMinCount = 1;
+        const specialMinCount = 1;
         const UPPERCASE_RE = /([A-Z])/g;
         const LOWERCASE_RE = /([a-z])/g;
         const NUMBER_RE = /([\d])/g;

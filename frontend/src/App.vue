@@ -10,16 +10,24 @@
                 <template v-slot:img="{ props }">
                     <v-img
                             v-bind="props"
-                            gradient="to top right, rgba(245,195,125,.5), rgba(201,119,64,.8)"
+                            gradient="to top right, rgba(245,195,125,.8), rgba(201,119,64,.8)"
                     ></v-img>
                 </template>
                 <v-spacer></v-spacer>
-                <v-img src="./assets/logo.png" max-width="220" @click="open('..')"></v-img>
-                <v-spacer></v-spacer>
-                <v-btn text :elevation="0" @click="unlog" v-if="$root.showData">
-                    <v-icon>mdi-exit-run</v-icon>
-                    Выход
-                </v-btn>
+                <v-row align="center" justify="start">
+                    <v-col :cols="6">
+                        <v-img src="./assets/logo.png" max-width="200" @click="open('..')"></v-img>
+                    </v-col>
+                    <v-spacer></v-spacer>
+                    <v-col :cols="6">
+                        <v-row justify="end">
+                            <v-btn text :elevation="0" @click="unlog" v-if="$root.showData">
+                                <v-icon>mdi-exit-run</v-icon>
+                                Выход
+                            </v-btn>
+                        </v-row>
+                    </v-col>
+                </v-row>
                 <v-spacer></v-spacer>
             </v-app-bar>
         </v-card>

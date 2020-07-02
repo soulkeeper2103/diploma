@@ -11,7 +11,7 @@ new Vue({
     showData: false,
     type: '',
     login: '',
-    url: '/'
+    url: ''
   },
   vuetify,
   render: h => h(App)
