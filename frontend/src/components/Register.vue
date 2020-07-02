@@ -1,7 +1,6 @@
 <template>
       <v-card
-              flat
-      width="70%">
+              flat>
           <v-card-text
                   class="headline
                             text-center"
@@ -100,7 +99,7 @@ export default {
             let token = this.$cookies.get('userToken')
             axios({
                 method: 'POST',
-                url: 'api/registerNewUser',
+                url: this.$root.url +'api/registerNewUser',
                 headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                 data: {
                     token: token,

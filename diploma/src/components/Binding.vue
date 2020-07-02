@@ -1,5 +1,5 @@
 <template>
-    <v-card flat width="70%" class="mx-auto">
+    <v-card flat min-width="360" width="50%" class="mx-auto">
         <v-card-title>
             Переплетные работы
         </v-card-title>
@@ -27,7 +27,6 @@
             </v-list>
             Так же мы рады предложить Вам индивидуальный переплет диссертаций, удостоверений, годовых отчетов и других важных для Вас документов. Мы предлагаем широкий спектр материалов.
         </v-card-text>
-        <v-row>
             <v-col>
                 <v-card flat>
                     <v-card-title>Рассчитать стоимость</v-card-title>
@@ -60,10 +59,7 @@
                         <v-card-text class="headline mb-1">{{result}}</v-card-text>
                 </v-card>
             </v-col>
-            <v-col>
                 <send-unauthorized-request class="mx-auto"  type="Переплет"></send-unauthorized-request>
-            </v-col>
-        </v-row>
     </v-card>
 </template>
 

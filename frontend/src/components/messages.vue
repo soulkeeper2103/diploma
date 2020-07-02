@@ -1,7 +1,6 @@
 <template>
     <v-card
-            flat
-            width="70%">
+            flat>
         <v-card-title>Сообщения <v-spacer></v-spacer>
             <v-dialog
                     v-model="dialog"
@@ -116,7 +115,7 @@
               let token = this.$cookies.get('userToken')
               axios({
                   method: 'POST',
-                  url: 'api/sendMessage',
+                  url: this.$root.url +'api/sendMessage',
                   headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                   data: {
                       token: token,
@@ -136,7 +135,7 @@
             let token = this.$cookies.get('userToken')
             axios({
                 method: 'GET',
-                url: 'api/SendMessages',
+                url: this.$root.url +'api/SendMessages',
                 headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token': token},
             }).then((response) => {
                 this.messages = response.data
@@ -145,7 +144,7 @@
                 .catch((error) => (console.log(error)));
             axios({
                 method: 'GET',
-                url: 'api/ReceivedMessages',
+                url: this.$root.url +'api/ReceivedMessages',
                 headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token': token},
             }).then((response) => {
                 this.messagesR = response.data
@@ -154,7 +153,7 @@
                 .catch((error) => (console.log(error)));
             axios({
                 method: 'GET',
-                url: 'api/Users',
+                url: this.$root.url +'api/Users',
                 headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
             }).then((response) => {
                 let result = []
@@ -167,7 +166,7 @@
                 let token = this.$cookies.get('userToken')
                 axios({
                     method: 'GET',
-                    url: 'api/SendMessages',
+                    url: this.$root.url +'api/SendMessages',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token': token},
                 }).then((response) => {
                     let a=0, b=0
@@ -181,7 +180,7 @@
                     .catch((error) => (console.log(error)));
                 axios({
                     method: 'GET',
-                    url: 'api/ReceivedMessages',
+                    url: this.$root.url +'api/ReceivedMessages',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token': token},
                 }).then((response) => {
                     let a, b
@@ -196,7 +195,7 @@
                     .catch((error) => (console.log(error)));
                 axios({
                     method: 'GET',
-                    url: 'api/Users',
+                    url: this.$root.url +'api/Users',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
                 }).then((response) => {
                     let result = []

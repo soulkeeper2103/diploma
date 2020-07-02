@@ -1,5 +1,5 @@
 <template>
-    <v-card flat width="70%" class="mx-auto">
+    <v-card flat min-width="360" width="50%" class="mx-auto">
             <v-card-title>
                 Архивная обработка
             </v-card-title>

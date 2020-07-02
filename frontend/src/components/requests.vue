@@ -1,7 +1,6 @@
 <template>
     <v-card
-            flat
-            width="70%">
+            flat>
         <v-card-title>Ваши заявки</v-card-title>
         <v-data-table
                 v-bind:key="req"
@@ -40,7 +39,7 @@
             let token = this.$cookies.get('userToken')
             axios({
                 method: 'GET',
-                url: 'api/requests/',
+                url: this.$root.url +'api/requests/',
                 headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token': token},
             }).then((response) => {
                 this.requests = response.data
@@ -51,7 +50,7 @@
                 let token = this.$cookies.get('userToken')
                 axios({
                     method: 'GET',
-                    url: 'api/requests/',
+                    url: this.$root.url +'api/requests/',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token': token},
                 }).then((response) => {
                     let a=0, b=0

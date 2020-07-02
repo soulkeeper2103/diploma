@@ -1,6 +1,5 @@
 <template>
-    <v-card  flat
-             width="70%">
+    <v-card  flat>
         <v-card-title>Изменить статус заявки</v-card-title>
         <v-card-text>
     <v-select
@@ -57,7 +56,7 @@
                 let token = this.$cookies.get('userToken')
                 axios({
                     method: 'POST',
-                    url: 'api/changeRequestStatus/',
+                    url: this.$root.url +'api/changeRequestStatus/',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                     data:{
                         token : token,
@@ -75,7 +74,7 @@
             let token = this.$cookies.get('userToken')
             axios({
                 method: 'GET',
-                url: 'api/requestsAll/',
+                url: this.$root.url +'api/requestsAll/',
                 headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
             }).then((response) => {
                 let result = []
@@ -88,7 +87,7 @@
                 let token = this.$cookies.get('userToken')
                 axios({
                     method: 'GET',
-                    url: 'api/requestsAll/',
+                    url: this.$root.url +'api/requestsAll/',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
                 }).then((response) => {
                     let result = []

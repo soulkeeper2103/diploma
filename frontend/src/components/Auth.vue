@@ -1,6 +1,7 @@
 <template>
         <v-card flat
-                width="50%">
+                min-width="360"
+                max-width="840">
             <v-card-text
                     class="headline
                             text-center"
@@ -33,44 +34,47 @@
                         :disabled="isButtonDisabled || isButtonDisabled1"
                         @click="auth">Вход</v-btn>
                 <v-spacer></v-spacer>
-                <v-dialog
-                        :elevation=0
-                        v-model="dialog"
-                        width="500"
-                >
-                    <template v-slot:activator="{ on }">
+            <v-dialog
+                    :elevation=0
+                    v-model="dialog"
+                    width="500"
+            >
+                <template v-slot:activator="{ on }">
+                    <v-btn
+                            text
+                            color="blue"
+                            x-small
+                            :elevation=0
+                            v-on="on"
+                    >
+                        Восстановить пароль
+                    </v-btn>
+                </template>
+
+                <v-card class="pa-5 mx-auto" >
+                    <v-card-title
+                            primary-title
+                    >
+                        Восстановление пароля
+                    </v-card-title>
+                    <v-card-text>
+                        Введите email, на который был зарегистрирован ваш аккаунт
+                    </v-card-text>
+                    <v-text-field
+                            :rules="[rules.required, rules.email]"
+                            v-model="email"></v-text-field>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
                         <v-btn
                                 :elevation=0
-                                v-on="on"
+                                :disabled="isButtonDisabled2"
+                                @click="restore"
                         >
-                            Восстановить пароль
+                            Отправить
                         </v-btn>
-                    </template>
-
-                    <v-card class="pa-5 mx-auto" >
-                        <v-card-title
-                                primary-title
-                        >
-                            Восстановление пароля
-                        </v-card-title>
-                        <v-card-text>
-                            Введите email, на который был зарегистрирован ваш аккаунт
-                        </v-card-text>
-                        <v-text-field
-                                :rules="[rules.required, rules.email]"
-                                v-model="email"></v-text-field>
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn
-                                    :elevation=0
-                                    :disabled="isButtonDisabled2"
-                                    @click="restore"
-                            >
-                                Отправить
-                            </v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-dialog>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
             </v-card-actions>
             <v-snackbar
                     v-model="snackbar"
@@ -82,7 +86,7 @@
                         text
                         @click="snackbar = false"
                 >
-                    Close
+                    Закрыть
                 </v-btn>
             </v-snackbar>
         </v-card>
@@ -124,7 +128,7 @@
             {
                 axios({
                     method: 'POST',
-                    url: 'api/auth',
+                    url: this.$root.url + 'api/auth',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                     data: {
                         login: this.login,
@@ -148,7 +152,7 @@
             {
                 axios({
                     method: 'POST',
-                    url: 'api/restorePassword',
+                    url: this.$root.url +'api/restorePassword',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                     data: {
                         email: this.email,
