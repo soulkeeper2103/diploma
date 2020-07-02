@@ -112,8 +112,8 @@
         },
         data() {
             return {
-                urlLicense: this.$root.url + "api/License",
-                urlAgreement: this.$root.url + "api/agreement",
+                urlLicense: "lk/api/License",
+                urlAgreement: "lk/api/agreement",
                 isButtonDisabled: true,
                 canSend: false,
                 isButtonDisabled1: true,

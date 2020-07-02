@@ -6,7 +6,6 @@ Vue.config.productionTip = false
 
 new Vue({
   data:{
-    url: '/'
   },
   vuetify,
   render: h => h(App)
