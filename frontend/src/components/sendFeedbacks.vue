@@ -1,7 +1,6 @@
 <template>
     <v-card
-            flat
-            width="70%">
+            flat>
         <v-card-title>Оставить отзыв</v-card-title>
         <v-textarea v-model="text" label="Отзыв" placeholder="Напишите отзыв здесь"></v-textarea>
         <v-card-text>
@@ -49,7 +48,7 @@
                 let token = this.$cookies.get('userToken')
                 axios({
                     method: 'POST',
-                    url: 'api/sendFeedback',
+                    url: this.$root.url +'api/sendFeedback',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                     data: {
                         token: token,
@@ -67,7 +66,7 @@
             let token = this.$cookies.get('userToken')
             axios({
                 method: 'POST',
-                url: 'api/getFeedbackByLogin',
+                url: this.$root.url +'api/getFeedbackByLogin',
                 headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                 data: {
                     token: token,

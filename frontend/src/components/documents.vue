@@ -1,7 +1,6 @@
 <template>
     <v-card
-            flat
-            width="70%">
+            flat>
         <v-card-title>Ваши документы</v-card-title>
         <v-text-field
                 v-model="search"
@@ -68,7 +67,7 @@
                 let token = this.$cookies.get('userToken')
                 axios({
                     method: 'POST',
-                    url: 'api/orderDocuments',
+                    url: this.$root.url +'api/orderDocuments',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                     data:{
                         token:  token,
@@ -88,7 +87,7 @@
             let token = this.$cookies.get('userToken')
             axios({
                 method: 'GET',
-                url: 'api/documents',
+                url: this.$root.url +'api/documents',
                 headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
             }).then((response) => {
                 this.documents = response.data
@@ -99,7 +98,7 @@
                 let token = this.$cookies.get('userToken')
                 axios({
                     method: 'GET',
-                    url: 'api/documents',
+                    url: this.$root.url +'api/documents',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
                 }).then((response) => {
                     let a=0, b=0

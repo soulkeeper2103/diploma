@@ -1,7 +1,6 @@
 <template>
     <v-card
-            flat
-            width="70%">
+            flat>
         <v-card-text>
             <v-card-title>Проверить статус заявки</v-card-title>
             <v-text-field
@@ -35,7 +34,7 @@
                 {
                     axios({
                         method: 'GET',
-                        url: 'api/requestsStatus/' + this.statusId,
+                        url: this.$root.url +'api/requestsStatus/' + this.statusId,
                         headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                     }).then((response) => {
                         if( response.data == ''){this.status = 'Такой заявки не существует'; }

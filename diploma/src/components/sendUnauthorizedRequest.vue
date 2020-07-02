@@ -41,6 +41,7 @@
             </v-text-field>
         </v-card-text>
         <v-card-actions>
+            <v-card-text>Нажимая кнопку отправить, вы подтверждаете свое <a target="_blank" :href=this.urlAgreement>согласие на обработку персональных данных</a> и <a target="_blank" :href=this.urlLicense>соглашаетесь с лицензионным соглашением</a></v-card-text>
             <v-btn
                     :elevation=0
                     :disabled="isButtonDisabled ||  isButtonDisabled1 ||  isButtonDisabled2 || isButtonDisabled3 || isButtonDisabled4"
@@ -111,6 +112,8 @@
         },
         data() {
             return {
+                urlLicense: this.$root.url + "api/License",
+                urlAgreement: this.$root.url + "api/agreement",
                 isButtonDisabled: true,
                 canSend: false,
                 isButtonDisabled1: true,

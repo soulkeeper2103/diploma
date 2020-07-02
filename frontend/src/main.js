@@ -10,7 +10,8 @@ new Vue({
   data:{
     showData: false,
     type: '',
-    login: ''
+    login: '',
+    url: '/'
   },
   vuetify,
   render: h => h(App)

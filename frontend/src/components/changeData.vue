@@ -1,6 +1,5 @@
 <template>
-    <v-card flat
-            width="70%">
+    <v-card flat>
         <v-card-title>Личные данные<v-spacer></v-spacer></v-card-title>
         <v-text-field
                 :rules="[rules.required, rules.lengthP, rules.loginlat]"
@@ -43,7 +42,6 @@
                 :type="show ? 'text' : 'password'"
                 @click:append="show = !show"
         ></v-text-field>
-        <v-card-actions>
             <v-btn :disabled="isButtonDisabled ||  isButtonDisabled1 ||  isButtonDisabled2 ||  isButtonDisabled3 ||  isButtonDisabled4"
                    :elevation=0
                    @click="changeData">Сохранить изменения</v-btn>
@@ -97,7 +95,6 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
-        </v-card-actions>
         <v-snackbar
                 v-model="snackbar"
                 :timeout="timeout"
@@ -173,7 +170,7 @@
                 let token = this.$cookies.get('userToken')
                 axios({
                     method: 'POST',
-                    url: 'api/changePassword',
+                    url: this.$root.url +'api/changePassword',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                     data: {
                         token: token,
@@ -196,7 +193,7 @@
                 let token = this.$cookies.get('userToken')
                 axios({
                     method: 'POST',
-                    url: 'api/changeData',
+                    url: this.$root.url +'api/changeData',
                     headers: {'Content-Type': 'application/json', 'Accept': '*/*'},
                     data: {
                         token: token,
@@ -226,7 +223,7 @@
             let token = this.$cookies.get('userToken')
             axios({
                 method: 'GET',
-                url: 'api/user',
+                url: this.$root.url +'api/user',
                 headers: {'Content-Type': 'application/json', 'Accept': '*/*', 'Token' : token},
                 data: {
                 },
